@@ -5,6 +5,7 @@
   "main": "electron.cjs",
   "scripts": {
     "dev": "astro dev",
+    "dev:4321": "node start-dev-4321.js",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",

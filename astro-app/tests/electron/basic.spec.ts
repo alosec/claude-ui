@@ -1,12 +1,32 @@
 import { test, expect } from '@playwright/test';
 import { _electron as electron } from 'playwright';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+async function checkDevServer(): Promise<boolean> {
+  try {
+    const response = await fetch('http://localhost:4321');
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
 
 test.describe('Electron App', () => {
+  test.beforeEach(async () => {
+    const serverRunning = await checkDevServer();
+    if (!serverRunning) {
+      throw new Error('Dev server not running on port 4321. Please start it with: npm run dev');
+    }
+  });
+
   test('launches electron app and loads main page', async () => {
-    // Launch Electron app
+    // Launch Electron app that will connect to existing dev server
     const electronApp = await electron.launch({
-      args: [path.join(__dirname, '../../electron.cjs')],
+      args: [path.join(__dirname, '../../electron-test.cjs')],
       env: {
         ...process.env,
         NODE_ENV: 'test'
@@ -16,16 +36,13 @@ test.describe('Electron App', () => {
     // Get the main window
     const page = await electronApp.firstWindow();
     
-    // Wait for app to load
+    // Wait for page to load localhost:4321
     await page.waitForLoadState('networkidle');
     
     // Verify the window is opened
     expect(page).toBeTruthy();
     
-    // Wait for Astro content to load (give it time to start server and load)
-    await page.waitForTimeout(3000);
-    
-    // Check if we can see some content (adjust selector based on your actual content)
+    // Check if we can see some content
     const title = await page.title();
     expect(title).toBeTruthy();
     
@@ -38,7 +55,7 @@ test.describe('Electron App', () => {
 
   test('can navigate to make page', async () => {
     const electronApp = await electron.launch({
-      args: [path.join(__dirname, '../../electron.cjs')],
+      args: [path.join(__dirname, '../../electron-test.cjs')],
       env: {
         ...process.env,
         NODE_ENV: 'test'
@@ -47,7 +64,6 @@ test.describe('Electron App', () => {
 
     const page = await electronApp.firstWindow();
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000);
     
     // Try to navigate to /make
     try {

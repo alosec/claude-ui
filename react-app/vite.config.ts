@@ -13,9 +13,9 @@ export default defineConfig({
       },
       includeAssets: ['icon-192.png', 'icon-512.png'],
       manifest: {
-        name: 'Claude UI',
-        short_name: 'ClaudeUI',
-        description: 'A React application for Claude UI management',
+        name: 'Project Manager',
+        short_name: 'ProjectMgr',
+        description: 'A React application for project management',
         theme_color: '#000000',
         background_color: '#ffffff',
         display: 'standalone',

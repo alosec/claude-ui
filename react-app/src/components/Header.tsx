@@ -22,11 +22,6 @@ export default function Header() {
               ←
             </button>
           )}
-          {isProjectView && (
-            <h1 className="app-title">
-              {projectName}
-            </h1>
-          )}
         </div>
         
         <div className="app-header-right">

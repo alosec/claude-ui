@@ -97,15 +97,6 @@ export default function ProjectView() {
   return (
     <div>
       <div className="row">
-        <div>
-          <button 
-            onClick={() => navigate('/')}
-            className="back-btn"
-          >
-            ← Back to Projects
-          </button>
-          <h1>{projectName}</h1>
-        </div>
         <button onClick={() => console.log('Add new task')}>
           + New Task
         </button>

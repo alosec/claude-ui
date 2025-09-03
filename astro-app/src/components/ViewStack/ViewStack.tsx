@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import ViewCard from './ViewCard';
 import FileExplorerView from './FileExplorerView';
 import GitView from './GitView';
+import SessionsView from './SessionsView';
 import type { FileSystemItem } from '../../services/FilesystemAdapter';
 import type { GitStatus } from '../../services/GitAdapter';
 import './view-stack.css';
@@ -14,7 +15,7 @@ interface ViewStackProps {
 interface ViewConfig {
   id: string;
   title: string;
-  component: 'file-explorer' | 'git';
+  component: 'file-explorer' | 'git' | 'sessions';
   expanded: boolean;
   color: string;
 }
@@ -34,6 +35,13 @@ export default function ViewStack({ fileTree, gitStatus }: ViewStackProps) {
       component: 'git',
       expanded: false,
       color: 'var(--card-color-2)'
+    },
+    {
+      id: 'sessions',
+      title: 'Sessions',
+      component: 'sessions',
+      expanded: false,
+      color: 'var(--card-color-3)'
     }
   ]);
   
@@ -81,6 +89,8 @@ export default function ViewStack({ fileTree, gitStatus }: ViewStackProps) {
         return <FileExplorerView fileTree={fileTree} />;
       case 'git':
         return <GitView gitStatus={gitStatus} />;
+      case 'sessions':
+        return <SessionsView />;
       default:
         return null;
     }

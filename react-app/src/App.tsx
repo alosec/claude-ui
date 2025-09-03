@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
-import ProjectsTable from './pages/ProjectsTable'
-import ProjectView from './pages/ProjectView'
-import Layout from './components/Layout'
+import ProjectsTable from './pages/ProjectsTable/ProjectsTable'
+import ProjectView from './pages/ProjectView/ProjectView'
+import Layout from './components/Layout/Layout'
 
 function App() {
   return (

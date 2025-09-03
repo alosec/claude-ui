@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext';
+import './header.css';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -7,7 +8,6 @@ export default function Header() {
   const { theme, toggleTheme } = useTheme();
   
   const isProjectView = location.pathname.startsWith('/project/');
-  const projectName = isProjectView ? location.pathname.split('/')[2] : '';
 
   return (
     <header className="app-header">

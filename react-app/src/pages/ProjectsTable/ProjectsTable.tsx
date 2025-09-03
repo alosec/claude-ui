@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Project } from '../types';
+import { Project } from '../../types';
+import './projects-table.css';
 
 export default function ProjectsTable() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -38,7 +39,7 @@ export default function ProjectsTable() {
 
   return (
     <div>
-      <table>
+      <table className="projects-table">
         <thead>
           <tr>
             <th>path</th>

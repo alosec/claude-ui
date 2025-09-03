@@ -1,0 +1,28 @@
+/* ProjectsTable Component Styles */
+.projects-table {
+  width: 100%;
+  cursor: pointer;
+}
+
+.projects-table tbody tr:hover {
+  background: var(--button-hover-bg);
+  color: var(--button-hover-text);
+}
+
+/* Mobile responsive for tables */
+@media (max-width: 768px) {
+  .projects-table {
+    font-size: 11px;
+  }
+  
+  .projects-table th,
+  .projects-table td {
+    padding: 2px 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .projects-table {
+    font-size: 10px;
+  }
+}

@@ -1,29 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Task, FileNode } from '../types';
-import FileTree from '../components/FileTree';
-
-const styles = {
-  projectView: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '12px',
-    maxWidth: '100%',
-  },
-  projectPathHeader: {
-    fontFamily: "'Courier New', Consolas, Monaco, monospace",
-    fontSize: '12px',
-    fontWeight: 'normal' as const,
-    padding: '4px 0 8px 0',
-    margin: '0',
-    color: 'var(--text-color)',
-  },
-};
+import { useParams } from 'react-router-dom';
+import { Task, FileNode } from '../../types';
+import FileTree from '../../components/FileTree/FileTree';
+import './project-view.css';
 
 export default function ProjectView() {
   const { projectName } = useParams<{ projectName: string }>();
-  const navigate = useNavigate();
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [, setTasks] = useState<Task[]>([]);
   const [fileTree, setFileTree] = useState<FileNode[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -92,21 +75,9 @@ export default function ProjectView() {
     return <div>Loading project...</div>;
   }
 
-
-  const getProjectSummary = () => {
-    const completedTasks = tasks.filter(t => t.status === 'completed').length;
-    const totalTasks = tasks.length;
-    const inProgress = tasks.filter(t => t.status === 'in_progress').length;
-    
-    if (totalTasks === 0) return 'Empty project with no tasks defined.';
-    if (completedTasks === totalTasks) return `Project complete with ${totalTasks} tasks finished.`;
-    if (inProgress > 0) return `Active development with ${inProgress} in progress, ${completedTasks}/${totalTasks} complete.`;
-    return `Inactive project with ${completedTasks}/${totalTasks} tasks complete.`;
-  };
-
   return (
-    <div style={styles.projectView}>
-      <div style={styles.projectPathHeader}>
+    <div className="project-view">
+      <div className="project-path-header">
         ~/projects/{projectName?.toLowerCase()}/
       </div>
       <FileTree fileTree={fileTree} />

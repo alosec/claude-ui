@@ -2,20 +2,23 @@
 const currentWorkspacePath = process.env.WORKSPACE_PATH || '/home/alex/code';
 ---
 
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>Claude UI - Settings</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+    <link rel="stylesheet" href="/src/styles/themes.css" />
+    <script src="/src/scripts/theme.js"></script>
     <style>
       body {
         margin: 0;
         padding: 0;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: white;
-        color: black;
+        background: var(--color-bg);
+        color: var(--color-text);
       }
       
       .container {
@@ -25,7 +28,7 @@ const currentWorkspacePath = process.env.WORKSPACE_PATH || '/home/alex/code';
       }
       
       .header {
-        border-bottom: 2px solid black;
+        border-bottom: 2px solid var(--color-border);
         padding-bottom: 1rem;
         margin-bottom: 2rem;
       }
@@ -37,7 +40,7 @@ const currentWorkspacePath = process.env.WORKSPACE_PATH || '/home/alex/code';
       }
       
       .back-link {
-        color: black;
+        color: var(--color-text);
         text-decoration: none;
         font-size: 1rem;
         margin-bottom: 1rem;
@@ -51,7 +54,7 @@ const currentWorkspacePath = process.env.WORKSPACE_PATH || '/home/alex/code';
       .setting-group {
         margin-bottom: 2rem;
         padding: 1.5rem;
-        border: 1px solid black;
+        border: 1px solid var(--color-border);
       }
       
       .setting-label {
@@ -62,7 +65,7 @@ const currentWorkspacePath = process.env.WORKSPACE_PATH || '/home/alex/code';
       }
       
       .setting-description {
-        color: #666;
+        color: var(--color-secondary-text);
         font-size: 0.9rem;
         margin-bottom: 1rem;
       }
@@ -70,7 +73,9 @@ const currentWorkspacePath = process.env.WORKSPACE_PATH || '/home/alex/code';
       .setting-input {
         width: 100%;
         padding: 0.75rem;
-        border: 2px solid black;
+        border: 2px solid var(--color-border);
+        background: var(--color-bg);
+        color: var(--color-text);
         font-size: 1rem;
         font-family: monospace;
         box-sizing: border-box;
@@ -78,12 +83,12 @@ const currentWorkspacePath = process.env.WORKSPACE_PATH || '/home/alex/code';
       
       .setting-input:focus {
         outline: none;
-        background: #f5f5f5;
+        background: var(--color-hover-bg);
       }
       
       .save-button {
-        background: black;
-        color: white;
+        background: var(--color-text);
+        color: var(--color-bg);
         border: none;
         padding: 1rem 2rem;
         font-size: 1rem;
@@ -92,14 +97,14 @@ const currentWorkspacePath = process.env.WORKSPACE_PATH || '/home/alex/code';
       }
       
       .save-button:hover {
-        background: #333;
+        background: var(--color-secondary-text);
       }
       
       .current-value {
         font-family: monospace;
-        background: #f5f5f5;
+        background: var(--color-muted-bg);
         padding: 0.5rem;
-        border-left: 3px solid black;
+        border-left: 3px solid var(--color-border);
         margin-bottom: 1rem;
         font-size: 0.9rem;
       }

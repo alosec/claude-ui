@@ -38,34 +38,34 @@
     90deg,
     var(--card-color) 0%,
     rgba(255, 255, 255, 0.2) 50%,
-    var(--next-card-color, rgb(156, 163, 175)) 100%
+    var(--next-card-color, var(--card-color-1)) 100%
   );
   z-index: 1;
 }
 
 /* Dynamic color transitions for stacked cards */
 .view-stack .view-card:nth-child(1) {
-  --card-color: rgb(59, 130, 246); /* Blue */
+  --card-color: var(--card-color-1);
 }
 
 .view-stack .view-card:nth-child(2) {
-  --card-color: rgb(34, 197, 94); /* Green */
-  --next-card-color: rgb(168, 85, 247); /* Purple */
+  --card-color: var(--card-color-2);
+  --next-card-color: var(--card-color-3);
 }
 
 .view-stack .view-card:nth-child(3) {
-  --card-color: rgb(168, 85, 247); /* Purple */
-  --next-card-color: rgb(244, 63, 94); /* Red */
+  --card-color: var(--card-color-3);
+  --next-card-color: var(--card-color-4);
 }
 
 .view-stack .view-card:nth-child(4) {
-  --card-color: rgb(244, 63, 94); /* Red */
-  --next-card-color: rgb(249, 115, 22); /* Orange */
+  --card-color: var(--card-color-4);
+  --next-card-color: var(--card-color-5);
 }
 
 .view-stack .view-card:nth-child(5) {
-  --card-color: rgb(249, 115, 22); /* Orange */
-  --next-card-color: rgb(234, 179, 8); /* Yellow */
+  --card-color: var(--card-color-5);
+  --next-card-color: var(--card-color-1);
 }
 
 /* Animation for card reordering */

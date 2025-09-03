@@ -1,6 +1,6 @@
 /* View Card Base Styles */
 .view-card {
-  background: var(--card-color, rgb(75, 85, 99));
+  background: var(--card-color);
   border: none;
   border-radius: 0;
   margin: 0;
@@ -100,11 +100,25 @@
 
 /* Content */
 .view-card-content {
-  background: white;
-  color: var(--text-color, #374151);
+  background: var(--card-content-bg);
+  color: var(--card-content-text);
   max-height: 600px;
   overflow-y: auto;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid var(--border-color);
+}
+
+/* Ensure all child elements inherit proper text color */
+.view-card-content * {
+  color: inherit;
+}
+
+.view-card-content a {
+  color: var(--card-content-text);
+  opacity: 0.8;
+}
+
+.view-card-content a:hover {
+  opacity: 1;
 }
 
 /* Smooth expand/collapse animation */

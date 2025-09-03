@@ -26,14 +26,14 @@ export default function ViewStack({ fileTree, gitStatus }: ViewStackProps) {
       title: 'File Explorer',
       component: 'file-explorer',
       expanded: true,
-      color: 'rgb(59, 130, 246)' // Blue
+      color: 'var(--card-color-1)'
     },
     {
       id: 'git-changes',
       title: 'Git Changes',
       component: 'git-changes',
       expanded: false,
-      color: 'rgb(34, 197, 94)' // Green
+      color: 'var(--card-color-2)'
     }
   ]);
 

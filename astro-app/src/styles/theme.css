@@ -9,6 +9,15 @@
   --button-hover-text: #fff;
   --th-bg: #000;
   --th-text: #fff;
+  
+  /* ViewStack Theme Colors - Light */
+  --card-color-1: rgb(59, 130, 246);    /* Vibrant Blue */
+  --card-color-2: rgb(34, 197, 94);     /* Vibrant Green */
+  --card-color-3: rgb(168, 85, 247);    /* Vibrant Purple */
+  --card-color-4: rgb(244, 63, 94);     /* Vibrant Red */
+  --card-color-5: rgb(249, 115, 22);    /* Vibrant Orange */
+  --card-content-bg: var(--bg-color);
+  --card-content-text: var(--text-color);
 }
 
 [data-theme="dark"] {
@@ -21,4 +30,13 @@
   --button-hover-text: #000;
   --th-bg: #fff;
   --th-text: #000;
+  
+  /* ViewStack Theme Colors - Dark */
+  --card-color-1: rgb(96, 165, 250);    /* Vibrant Blue for dark */
+  --card-color-2: rgb(52, 211, 153);    /* Vibrant Green for dark */
+  --card-color-3: rgb(196, 181, 253);   /* Vibrant Purple for dark */
+  --card-color-4: rgb(248, 113, 113);   /* Vibrant Red for dark */
+  --card-color-5: rgb(251, 146, 60);    /* Vibrant Orange for dark */
+  --card-content-bg: var(--bg-color);
+  --card-content-text: var(--text-color);
 }

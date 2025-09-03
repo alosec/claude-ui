@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "dev:4321": "node start-dev-4321.js",
+    "dev:8081": "node start-dev-8081.js",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",

@@ -1,0 +1,19 @@
+# Dependencies
+**/node_modules/*
+
+# Backup files  
+*~
+*.md~
+*.astro~
+
+# Test artifacts
+test-results/
+playwright-report/
+
+# Environment files
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db

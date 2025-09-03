@@ -1,0 +1,30 @@
+/* Status Badge Component Styles */
+.status {
+  padding: 2px 6px;
+  border: 1px solid var(--border-color);
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.status.active {
+  background: var(--button-hover-bg);
+  color: var(--button-hover-text);
+}
+
+.status.completed {
+  background: var(--button-hover-bg);
+  color: var(--button-hover-text);
+}
+
+.status.in_progress {
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--border-color);
+}
+
+.status.pending {
+  background: var(--button-bg);
+  color: var(--button-text);
+}

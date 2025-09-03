@@ -3,7 +3,8 @@ import type {
   GitBranch, 
   GitWorktree, 
   GitStatus, 
-  GitRemote, 
+  GitRemote,
+  GitFileChange, 
   GitOperationResult 
 } from './types';
 
@@ -85,6 +86,42 @@ export class ClientGitAdapter implements GitAdapter {
       });
   }
 
+  private parseFileChanges(statusOutput: string): GitFileChange[] {
+    return statusOutput
+      .split('\n')
+      .filter(line => line.trim())
+      .map(line => {
+        const indexStatus = line.charAt(0);
+        const workTreeStatus = line.charAt(1);
+        const path = line.substring(3);
+        
+        // Determine if staged based on index status
+        const staged = indexStatus !== ' ' && indexStatus !== '?';
+        
+        // Determine status based on git porcelain format
+        let status: GitFileChange['status'];
+        if (indexStatus === 'A' || workTreeStatus === 'A') {
+          status = 'added';
+        } else if (indexStatus === 'D' || workTreeStatus === 'D') {
+          status = 'deleted';
+        } else if (indexStatus === 'R' || workTreeStatus === 'R') {
+          status = 'renamed';
+        } else if (indexStatus === 'C' || workTreeStatus === 'C') {
+          status = 'copied';
+        } else if (line.startsWith('??')) {
+          status = 'untracked';
+        } else {
+          status = 'modified';
+        }
+        
+        return {
+          path,
+          status,
+          staged
+        };
+      });
+  }
+
   async getRepoStatus(projectPath: string): Promise<GitOperationResult<GitStatus>> {
     try {
       // Check if it's a git repository first
@@ -97,11 +134,13 @@ export class ClientGitAdapter implements GitAdapter {
       const branches = this.parseBranches(branchOutput);
       const worktrees = this.parseWorktrees(worktreeOutput);
       const status = this.parseGitStatus(statusOutput, projectPath);
+      const fileChanges = this.parseFileChanges(statusOutput);
       
       const fullStatus: GitStatus = {
         ...status,
         branches,
-        worktrees
+        worktrees,
+        fileChanges
       };
       
       return { success: true, data: fullStatus };
@@ -126,6 +165,19 @@ export class ClientGitAdapter implements GitAdapter {
       return {
         success: false,
         error: `Failed to get repository status: ${error instanceof Error ? error.message : 'Unknown error'}`
+      };
+    }
+  }
+
+  async getFileChanges(projectPath: string): Promise<GitOperationResult<GitFileChange[]>> {
+    try {
+      const statusOutput = await this.executeGitCommand(projectPath, ['status', '--porcelain']);
+      const fileChanges = this.parseFileChanges(statusOutput);
+      return { success: true, data: fileChanges };
+    } catch (error) {
+      return {
+        success: false,
+        error: `Failed to get file changes: ${error instanceof Error ? error.message : 'Unknown error'}`
       };
     }
   }

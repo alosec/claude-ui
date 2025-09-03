@@ -1,0 +1,157 @@
+/* View Card Base Styles */
+.view-card {
+  background: var(--card-color, rgb(75, 85, 99));
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+/* Flat design - no shadows or gradients */
+.view-card.expanded {
+  background: var(--card-color);
+}
+
+.view-card.collapsed {
+  background: var(--card-color);
+  opacity: 0.8;
+}
+
+/* Header */
+.view-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.view-card-header:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.view-card-title-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.view-card-expand-icon {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.view-card-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Controls */
+.view-card-controls {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.view-card-header:hover .view-card-controls {
+  opacity: 1;
+}
+
+.view-card-move-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 2px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-card-move-btn:hover:not(.disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.view-card-move-btn.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Content */
+.view-card-content {
+  background: white;
+  color: var(--text-color, #374151);
+  max-height: 600px;
+  overflow-y: auto;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth expand/collapse animation */
+.view-card.expanded .view-card-content {
+  animation: expandContent 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.view-card.collapsed .view-card-content {
+  animation: collapseContent 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes expandContent {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 600px;
+    opacity: 1;
+  }
+}
+
+@keyframes collapseContent {
+  from {
+    max-height: 600px;
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+/* Scrollbar styling for content */
+.view-card-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.view-card-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.view-card-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.view-card-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}

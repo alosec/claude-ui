@@ -4,6 +4,7 @@ import type {
   GitWorktree, 
   GitStatus, 
   GitRemote, 
+  GitFileChange,
   GitOperationResult 
 } from './types';
 
@@ -26,6 +27,22 @@ export class ApiGitAdapter implements GitAdapter {
       return {
         success: false,
         error: `Failed to get repository status: ${error instanceof Error ? error.message : 'Unknown error'}`
+      };
+    }
+  }
+
+  async getFileChanges(projectPath: string): Promise<GitOperationResult<GitFileChange[]>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/git-status.json?project=${encodeURIComponent(projectPath)}&info=changes`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return { success: true, data: data.fileChanges || [] };
+    } catch (error) {
+      return {
+        success: false,
+        error: `Failed to get file changes: ${error instanceof Error ? error.message : 'Unknown error'}`
       };
     }
   }

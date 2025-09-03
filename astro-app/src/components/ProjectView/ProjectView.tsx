@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getFilesystemAdapter, type FileSystemItem } from '../../services/FilesystemAdapter';
 import { getGitAdapter, type GitStatus } from '../../services/GitAdapter';
-import FileTree from '../../components/FileTree/FileTree';
+import ViewStack from '../../components/ViewStack/ViewStack';
 import GitStatusBar from '../../components/GitStatusBar/GitStatusBar';
 import './project-view.css';
 
@@ -88,7 +88,10 @@ export default function ProjectView() {
           <GitStatusBar gitStatus={gitStatus} variant="compact" />
         )}
       </div>
-      <FileTree fileTree={fileTree.children || []} />
+      <ViewStack 
+        fileTree={fileTree.children || []} 
+        gitStatus={gitStatus}
+      />
     </div>
   );
 }

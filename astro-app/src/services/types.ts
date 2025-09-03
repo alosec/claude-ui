@@ -82,6 +82,13 @@ export interface GitWorktree {
   isBare: boolean;
 }
 
+export interface GitFileChange {
+  path: string;
+  status: 'added' | 'modified' | 'deleted' | 'renamed' | 'copied' | 'untracked';
+  staged: boolean;
+  oldPath?: string; // For renamed files
+}
+
 export interface GitStatus {
   isRepository: boolean;
   branches: GitBranch[];
@@ -92,6 +99,7 @@ export interface GitStatus {
   unstagedFiles: number;
   untrackedFiles: number;
   stashCount: number;
+  fileChanges?: GitFileChange[];
 }
 
 export interface GitRemote {
@@ -110,6 +118,7 @@ export interface GitOperationResult<T = any> {
 export interface GitAdapter {
   // Repository information
   getRepoStatus(projectPath: string): Promise<GitOperationResult<GitStatus>>;
+  getFileChanges(projectPath: string): Promise<GitOperationResult<GitFileChange[]>>;
   getBranches(projectPath: string): Promise<GitOperationResult<GitBranch[]>>;
   getWorktrees(projectPath: string): Promise<GitOperationResult<GitWorktree[]>>;
   getRemotes(projectPath: string): Promise<GitOperationResult<GitRemote[]>>;

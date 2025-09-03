@@ -5,6 +5,10 @@
   box-sizing: border-box;
 }
 
+html, body {
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Courier New', Consolas, Monaco, monospace;
   line-height: 1.2;

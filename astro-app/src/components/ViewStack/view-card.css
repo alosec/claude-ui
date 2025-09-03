@@ -73,6 +73,12 @@
   opacity: 1;
 }
 
+/* Moving state - show controls on all cards */
+.view-card-controls.moving {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
 .view-card-move-btn {
   background: rgba(255, 255, 255, 0.2);
   border: none;

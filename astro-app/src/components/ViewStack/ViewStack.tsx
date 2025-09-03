@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import ViewCard from './ViewCard';
 import FileExplorerView from './FileExplorerView';
 import GitChangesView from './GitChangesView';
@@ -44,6 +44,9 @@ export default function ViewStack({ fileTree, gitStatus }: ViewStackProps) {
       color: 'var(--card-color-3)'
     }
   ]);
+  
+  const [isMoving, setIsMoving] = useState(false);
+  const movingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const toggleView = (viewId: string) => {
     setViewConfigs(configs => 
@@ -64,6 +67,20 @@ export default function ViewStack({ fileTree, gitStatus }: ViewStackProps) {
       newConfigs.splice(toIndex, 0, movedView);
       return newConfigs;
     });
+    
+    // Trigger moving state
+    setIsMoving(true);
+    
+    // Clear any existing timeout
+    if (movingTimeoutRef.current) {
+      clearTimeout(movingTimeoutRef.current);
+    }
+    
+    // Set timeout to fade out moving state after 3 seconds
+    movingTimeoutRef.current = setTimeout(() => {
+      setIsMoving(false);
+      movingTimeoutRef.current = null;
+    }, 3000);
   };
 
   const renderViewContent = (viewConfig: ViewConfig) => {
@@ -87,6 +104,7 @@ export default function ViewStack({ fileTree, gitStatus }: ViewStackProps) {
           title={viewConfig.title}
           expanded={viewConfig.expanded}
           color={viewConfig.color}
+          isMoving={isMoving}
           onToggle={() => toggleView(viewConfig.id)}
           onMove={(direction) => {
             const targetIndex = direction === 'up' ? index - 1 : index + 1;

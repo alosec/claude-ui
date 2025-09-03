@@ -6,6 +6,7 @@ interface ViewCardProps {
   expanded: boolean;
   color: string;
   children: ReactNode;
+  isMoving: boolean;
   onToggle: () => void;
   onMove: (direction: 'up' | 'down') => void;
   canMoveUp: boolean;
@@ -17,6 +18,7 @@ export default function ViewCard({
   expanded,
   color,
   children,
+  isMoving,
   onToggle,
   onMove,
   canMoveUp,
@@ -35,7 +37,7 @@ export default function ViewCard({
           <h3 className="view-card-title">{title}</h3>
         </div>
         
-        <div className="view-card-controls">
+        <div className={`view-card-controls ${isMoving ? 'moving' : ''}`}>
           <button
             className={`view-card-move-btn ${!canMoveUp ? 'disabled' : ''}`}
             onClick={(e) => {

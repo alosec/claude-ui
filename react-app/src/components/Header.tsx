@@ -19,7 +19,7 @@ export default function Header() {
               onClick={() => navigate('/')}
               aria-label="Back to projects"
             >
-              ←
+              ◀
             </button>
           )}
         </div>

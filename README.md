@@ -1,0 +1,2 @@
+
+Claude UI is something a little odd: it is an astro web app with react which makes calls to claude code (for now) via an API wrapper. The actual app is... idk, let's use assistant-ui for a chat threaded view, but we're also wanting to see this operate a little differently as well. There should be an initiative for a more custom / innoviate ui than just a chat thread. I'm especially thinking of visual and file tree struc based development. 

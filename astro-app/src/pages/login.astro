@@ -1,0 +1,106 @@
+---
+import Layout from '../components/Layout.astro';
+
+const error = Astro.url.searchParams.get('error');
+---
+
+<Layout title="Access">
+  <div class="login-container">
+    <div class="login-content">
+      <h1>🔒</h1>
+      <p>Access required</p>
+      <form method="POST" action="/login" class="login-form">
+        <input 
+          type="password" 
+          name="password" 
+          placeholder="Password" 
+          required 
+          class="login-input"
+          autofocus
+        />
+        {error && <div class="error">Invalid password</div>}
+        <button type="submit" class="login-button">Enter</button>
+      </form>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+  }
+
+  .login-content {
+    text-align: center;
+  }
+
+  .login-content h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--text-color);
+  }
+
+  .login-content p {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    color: var(--text-color);
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 200px;
+    margin: 0 auto;
+  }
+
+  .login-input {
+    font-size: 14px;
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family: inherit;
+    text-align: center;
+    transition: border-color 0.2s ease;
+  }
+
+  .login-input:focus {
+    outline: none;
+    border-color: var(--text-color);
+  }
+
+  .login-input::placeholder {
+    color: var(--text-color);
+    opacity: 0.5;
+  }
+
+  .login-button {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .login-button:hover {
+    background: var(--hover-bg);
+    border-color: var(--text-color);
+  }
+
+  .error {
+    font-size: 12px;
+    color: #ff4444;
+    margin-top: -8px;
+    font-weight: bold;
+  }
+</style>

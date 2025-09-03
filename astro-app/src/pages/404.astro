@@ -1,0 +1,57 @@
+---
+import Layout from '../components/Layout.astro';
+---
+
+<Layout title="404 - Page Not Found">
+  <div class="error-container">
+    <div class="error-content">
+      <h1>404</h1>
+      <p>Page not found</p>
+      <a href="/" class="back-link">← Back to home</a>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .error-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+  }
+
+  .error-content {
+    text-align: center;
+  }
+
+  .error-content h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--text-color);
+  }
+
+  .error-content p {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    color: var(--text-color);
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .back-link:hover {
+    background: var(--hover-bg);
+    border-color: var(--text-color);
+  }
+</style>

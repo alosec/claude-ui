@@ -93,7 +93,14 @@ Natural Language → AI Analysis → Generated Code → Production
 
 *Note: Git components styled minimally per user preference - no colors, animations, or complex UI elements*
 
-## Priority Bug: Mobile PWA 404 Issue
+## Priority Bugs
+
+### Git Changes View Issue  
+**Git changes view shows no changes when changes have definitely occurred**: The new ViewStack git changes view is not properly displaying file changes even when git status shows modifications.
+
+*Suspected causes*: Git API endpoint missing implementation for detailed changes, or GitChangesView not receiving proper data from git status*
+
+### Mobile PWA 404 Issue
 **Critical mobile navigation bug**: When switching apps on phone and returning to PWA, it loads 404 page and loses project URL accessibility. This breaks the core PWA experience and needs immediate investigation.
 
 *Suspected causes*: Service worker caching issues, React Router state loss, or PWA navigation handling during app switching*

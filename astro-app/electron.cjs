@@ -38,7 +38,7 @@ function startAstroServer() {
   // Get package.json to find the dev script
   const packageJson = JSON.parse(readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
   
-  astroServer = spawn('npm', ['run', 'preview'], {
+  astroServer = spawn('npm', ['run', 'dev'], {
     cwd: __dirname,
     stdio: 'pipe'
   });
@@ -47,13 +47,15 @@ function startAstroServer() {
     const output = data.toString();
     console.log('Astro:', output);
     
-    // Look for the server URL
-    if (output.includes('Local:')) {
-      const match = output.match(/Local:\s+http:\/\/localhost:(\d+)/);
+    // Look for the server URL - handle both formats
+    if (output.includes('Local') && output.includes('localhost')) {
+      const match = output.match(/localhost:(\d+)/);
       if (match) {
         const port = match[1];
         console.log(`Astro server running on port ${port}`);
-        mainWindow.loadURL(`http://localhost:${port}`);
+        setTimeout(() => {
+          mainWindow.loadURL(`http://localhost:${port}`);
+        }, 1000); // Give server time to fully start
       }
     }
   });

@@ -1,0 +1,45 @@
+---
+
+---
+
+<div class="theme-toggle">
+  <button id="theme-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark/light theme">
+    <span class="theme-icon light-icon">☀️</span>
+    <span class="theme-icon dark-icon">🌙</span>
+  </button>
+</div>
+
+<style>
+  .theme-toggle {
+    position: relative;
+  }
+  
+  #theme-toggle-btn {
+    background: var(--color-bg);
+    border: 2px solid var(--color-border);
+    color: var(--color-text);
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    transition: background-color 0.2s ease;
+  }
+
+  #theme-toggle-btn:hover {
+    background: var(--color-hover-bg);
+  }
+  
+  .theme-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+  
+  [data-theme="light"] .dark-icon,
+  [data-theme="dark"] .light-icon {
+    display: none;
+  }
+</style>

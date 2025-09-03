@@ -1,0 +1,55 @@
+/* Theme Definitions */
+
+:root {
+  /* Light theme (default) */
+  --color-bg: white;
+  --color-text: black;
+  --color-border: black;
+  --color-hover-bg: #f5f5f5;
+  --color-secondary-text: #666;
+  --color-accent-bg: #f5f5f5;
+  --color-muted-bg: #fafafa;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+}
+
+[data-theme="dark"] {
+  /* Dark theme */
+  --color-bg: #1a1a1a;
+  --color-text: #e0e0e0;
+  --color-border: #404040;
+  --color-hover-bg: #2a2a2a;
+  --color-secondary-text: #a0a0a0;
+  --color-accent-bg: #2a2a2a;
+  --color-muted-bg: #1f1f1f;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
+}
+
+/* Theme-specific adjustments */
+[data-theme="dark"] pre {
+  background: var(--color-accent-bg);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] code {
+  background: var(--color-accent-bg);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] blockquote {
+  border-left: 4px solid var(--color-border);
+  background: var(--color-accent-bg);
+  color: var(--color-secondary-text);
+}
+
+/* Smooth transitions for theme changes */
+html {
+  transition: background-color 0.2s ease;
+}
+
+body * {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}

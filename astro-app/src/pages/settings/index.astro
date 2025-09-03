@@ -1,0 +1,143 @@
+---
+const currentWorkspacePath = process.env.WORKSPACE_PATH || '/home/alex/code';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Claude UI - Settings</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: white;
+        color: black;
+      }
+      
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem 20px;
+      }
+      
+      .header {
+        border-bottom: 2px solid black;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+      }
+      
+      .header h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+      }
+      
+      .back-link {
+        color: black;
+        text-decoration: none;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        display: inline-block;
+      }
+      
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      
+      .setting-group {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border: 1px solid black;
+      }
+      
+      .setting-label {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        display: block;
+      }
+      
+      .setting-description {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+      
+      .setting-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid black;
+        font-size: 1rem;
+        font-family: monospace;
+        box-sizing: border-box;
+      }
+      
+      .setting-input:focus {
+        outline: none;
+        background: #f5f5f5;
+      }
+      
+      .save-button {
+        background: black;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-top: 1rem;
+      }
+      
+      .save-button:hover {
+        background: #333;
+      }
+      
+      .current-value {
+        font-family: monospace;
+        background: #f5f5f5;
+        padding: 0.5rem;
+        border-left: 3px solid black;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="/make" class="back-link">← Back to Dashboard</a>
+      
+      <div class="header">
+        <h1>Settings</h1>
+      </div>
+      
+      <div class="setting-group">
+        <label class="setting-label">Workspace Path</label>
+        <div class="setting-description">
+          Directory where your projects are located. This path will be scanned for projects on the dashboard.
+        </div>
+        <div class="current-value">
+          Current: {currentWorkspacePath}
+        </div>
+        <input 
+          type="text" 
+          class="setting-input"
+          value={currentWorkspacePath}
+          placeholder="/path/to/your/workspace"
+        />
+        <button class="save-button">Save Settings</button>
+      </div>
+      
+      <script>
+        // Note: This is a placeholder for client-side functionality
+        // In a real implementation, you'd want to handle form submission
+        // and persist settings to a config file or environment variables
+        document.querySelector('.save-button').addEventListener('click', () => {
+          alert('Settings functionality not yet implemented. Please set WORKSPACE_PATH environment variable manually.');
+        });
+      </script>
+    </div>
+  </body>
+</html>

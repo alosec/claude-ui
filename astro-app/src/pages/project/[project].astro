@@ -1,0 +1,222 @@
+---
+import fs from 'fs/promises';
+import path from 'path';
+
+const WORKSPACE_PATH = process.env.WORKSPACE_PATH || '/home/alex/code';
+const { project } = Astro.params;
+
+let projectExists = false;
+let projectPath = '';
+
+if (project) {
+  projectPath = path.join(WORKSPACE_PATH, project);
+  try {
+    const stats = await fs.stat(projectPath);
+    projectExists = stats.isDirectory();
+  } catch (error) {
+    projectExists = false;
+  }
+}
+
+if (!projectExists) {
+  return new Response('Project not found', { status: 404 });
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Claude UI - {project}</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: white;
+        color: black;
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 20px;
+      }
+      
+      .header {
+        border-bottom: 2px solid black;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .header h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+      }
+      
+      .back-link {
+        color: black;
+        text-decoration: none;
+        font-size: 1rem;
+      }
+      
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      
+      .project-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
+        height: calc(100vh - 200px);
+      }
+      
+      .file-tree {
+        border: 2px solid black;
+        padding: 1rem;
+        overflow-y: auto;
+        background: white;
+      }
+      
+      .file-tree h3 {
+        margin: 0 0 1rem 0;
+        font-size: 1.1rem;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 0.5rem;
+      }
+      
+      .content-area {
+        border: 2px solid black;
+        padding: 1rem;
+        overflow-y: auto;
+        background: white;
+      }
+      
+      .loading {
+        color: #666;
+        font-style: italic;
+      }
+      
+      .tree-item {
+        cursor: pointer;
+        padding: 0.25rem 0;
+        user-select: none;
+      }
+      
+      .tree-item:hover {
+        background: #f5f5f5;
+      }
+      
+      .tree-item.directory {
+        font-weight: 500;
+      }
+      
+      .tree-item.file {
+        color: #666;
+        margin-left: 1rem;
+      }
+      
+      .tree-item::before {
+        content: "📁";
+        margin-right: 0.5rem;
+      }
+      
+      .tree-item.file::before {
+        content: "📄";
+      }
+      
+      .project-info {
+        background: #f5f5f5;
+        padding: 1rem;
+        border-left: 3px solid black;
+        margin-bottom: 1rem;
+      }
+      
+      .project-path {
+        font-family: monospace;
+        font-size: 0.9rem;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>{project}</h1>
+        <a href="/make" class="back-link">← Back to Dashboard</a>
+      </div>
+      
+      <div class="project-info">
+        <div class="project-path">{projectPath}</div>
+      </div>
+      
+      <div class="project-layout">
+        <div class="file-tree">
+          <h3>Project Structure</h3>
+          <div id="tree-content" class="loading">Loading project structure...</div>
+        </div>
+        
+        <div class="content-area">
+          <h3>Welcome to {project}</h3>
+          <p>Select a file from the project structure to view its contents, or use this space for project-specific tools and visualizations.</p>
+          <p>This is where the innovative UI elements for Claude Code integration will be implemented.</p>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      // Load project file tree
+      async function loadProjectTree() {
+        try {
+          const response = await fetch(`/api/project-tree.json?project=${encodeURIComponent('{project}')}&depth=3`);
+          const data = await response.json();
+          
+          if (data.error) {
+            document.getElementById('tree-content').innerHTML = `<div style="color: red;">Error: ${data.error}</div>`;
+            return;
+          }
+          
+          const treeContainer = document.getElementById('tree-content');
+          treeContainer.innerHTML = '';
+          renderTree(data.tree, treeContainer);
+          
+        } catch (error) {
+          document.getElementById('tree-content').innerHTML = `<div style="color: red;">Failed to load project structure</div>`;
+        }
+      }
+      
+      function renderTree(node, container, level = 0) {
+        if (!node) return;
+        
+        const item = document.createElement('div');
+        item.className = `tree-item ${node.type}`;
+        item.style.marginLeft = `${level * 1}rem`;
+        item.textContent = node.name;
+        
+        if (node.type === 'file') {
+          item.addEventListener('click', () => {
+            console.log('File clicked:', node.path);
+            // TODO: Implement file content loading
+          });
+        }
+        
+        container.appendChild(item);
+        
+        if (node.children && node.children.length > 0) {
+          node.children.forEach(child => {
+            renderTree(child, container, level + 1);
+          });
+        }
+      }
+      
+      // Load tree when page loads
+      loadProjectTree();
+    </script>
+  </body>
+</html>

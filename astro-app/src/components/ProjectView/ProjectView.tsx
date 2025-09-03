@@ -84,9 +84,6 @@ export default function ProjectView() {
         <div className="project-path-header">
           {fileTree.path}/
         </div>
-        {gitStatus && (
-          <GitStatusBar gitStatus={gitStatus} variant="compact" />
-        )}
       </div>
       <ViewStack 
         fileTree={fileTree.children || []} 

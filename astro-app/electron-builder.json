@@ -1,0 +1,22 @@
+{
+  "appId": "com.example.astro-app",
+  "productName": "Astro App",
+  "directories": {
+    "output": "electron-dist"
+  },
+  "files": [
+    "electron.cjs",
+    "dist/**/*",
+    "node_modules/**/*",
+    "package.json"
+  ],
+  "mac": {
+    "category": "public.app-category.productivity"
+  },
+  "win": {
+    "target": "nsis"
+  },
+  "linux": {
+    "target": "AppImage"
+  }
+}

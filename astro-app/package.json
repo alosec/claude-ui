@@ -2,6 +2,7 @@
   "name": "astro-app",
   "type": "module",
   "version": "0.0.1",
+  "main": "electron.cjs",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -11,7 +12,11 @@
     "test:headed": "HEADED=true playwright test",
     "test:debug": "HEADED=true playwright test --debug",
     "test:ui": "playwright test --ui",
-    "test:report": "playwright show-report"
+    "test:report": "playwright show-report",
+    "electron": "electron .",
+    "electron-dev": "NODE_ENV=development electron .",
+    "build-electron": "astro build && electron-builder",
+    "dist": "astro build && electron-builder --publish=never"
   },
   "dependencies": {
     "@astrojs/react": "^4.3.0",
@@ -22,6 +27,8 @@
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.55.0"
+    "@playwright/test": "^1.55.0",
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.12"
   }
 }

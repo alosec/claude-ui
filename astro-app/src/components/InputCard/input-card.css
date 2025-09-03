@@ -1,0 +1,74 @@
+/* Input Card Base Styles */
+.input-card {
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.input-card:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .input-card:hover {
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+/* Header */
+.input-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-color);
+}
+
+.input-card-icon {
+  color: var(--text-color);
+  font-size: 18px;
+  font-weight: bold;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+/* Form */
+.input-card-form {
+  flex: 1;
+}
+
+.input-card-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-color);
+  font-size: 14px;
+  font-family: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+.input-card-input::placeholder {
+  color: var(--text-color);
+  opacity: 0.5;
+}
+
+.input-card-input:focus::placeholder {
+  opacity: 0.3;
+}
+
+/* Remove autofill styles */
+.input-card-input:-webkit-autofill,
+.input-card-input:-webkit-autofill:hover,
+.input-card-input:-webkit-autofill:focus,
+.input-card-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--bg-color) inset !important;
+  -webkit-text-fill-color: var(--text-color) !important;
+  background-color: var(--bg-color) !important;
+}

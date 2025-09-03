@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getFilesystemAdapter, type FileSystemItem } from '../../services/FilesystemAdapter';
 import { getGitAdapter, type GitStatus } from '../../services/GitAdapter';
 import ViewStack from '../../components/ViewStack/ViewStack';
+import InputCard from '../../components/InputCard/InputCard';
 import GitStatusBar from '../../components/GitStatusBar/GitStatusBar';
 import './project-view.css';
 
@@ -78,6 +79,10 @@ export default function ProjectView() {
     return <div>No project data available</div>;
   }
 
+  const handleInputSubmit = (value: string) => {
+    console.log('Input submitted:', value);
+  };
+
   return (
     <div className="project-view">
       <div className="project-header">
@@ -85,6 +90,10 @@ export default function ProjectView() {
           {fileTree.path}/
         </div>
       </div>
+      <InputCard
+        onSubmit={handleInputSubmit}
+        placeholder="Input..."
+      />
       <ViewStack 
         fileTree={fileTree.children || []} 
         gitStatus={gitStatus}

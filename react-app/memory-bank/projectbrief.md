@@ -1,25 +1,34 @@
-# Project Brief: React-to-Astro Migration
+# Project Brief: Spec-Driven AI Programming Environment
 
-## Core Requirements
-Migrate the advanced React application to run within Astro framework while maintaining:
-- Electron desktop app capability
-- React Router navigation
-- Theme switching functionality  
-- File tree browsing interface
-- Project management features
+## Core Vision
+Build a development environment where **Large Language Models function as "automatic compilers"** - transforming human-readable specifications directly into working applications and comprehensive test suites.
 
-## Primary Goal
-Replace Astro app's src/ directory entirely with React app components, using Astro as a wrapper framework for dual web/Electron deployment capability.
+## Revolutionary Paradigm Shift
+**Traditional**: Manual coding from ambiguous specifications  
+**AI-Driven**: Specifications automatically compile to working apps + tests
 
-## Key Constraints
-- Preserve Astro configuration for Electron compatibility
-- Maintain neobrutalist black/white design system
-- Keep React components' modular architecture
-- Ensure SSR/SSG benefits from Astro framework
+## Primary Requirements
+- **Multi-Environment Deployment**: Web, PWA, Electron desktop app
+- **Real Filesystem Integration**: Connect to actual developer workspaces
+- **Specification Authoring Environment**: Natural language spec writing
+- **LLM Compiler Integration**: Automatic spec-to-code generation
+- **Live Validation**: Real-time verification of generated code against specs
+
+## Architecture Foundation ✅ COMPLETE
+- **Astro + React**: Multi-environment wrapper with React components
+- **Filesystem Services**: Real project discovery and file operations
+- **Component Architecture**: Modular, scalable UI components
+- **Authentication**: Secure access for production deployment
+- **PWA Support**: Installable app with offline capabilities
+
+## Next Phase: LLM Integration
+- **Spec Editor**: Rich environment for specification authoring
+- **Code Generation**: Real-time spec-to-code compilation
+- **Test Suite Generation**: Automatic test creation from specifications
+- **Validation Pipeline**: Ensure generated code meets spec requirements
 
 ## Success Criteria
-- React app renders correctly within Astro
-- Theme toggle works seamlessly
-- Navigation between projects functions
-- Electron build process remains intact
-- Tests pass with updated components
+- Natural language specifications compile to working applications
+- Generated code passes comprehensive test suites
+- Iterative spec refinement through LLM feedback
+- Production-ready code generation from specifications

@@ -101,41 +101,9 @@ export default function ProjectView() {
 
   return (
     <div className="project-view">
-      <div className="project-summary">
-        {getProjectSummary()}
-      </div>
-
       <div className="file-tree-compact">
         {renderFileTree(fileTree)}
       </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Task</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((task) => (
-            <tr key={task.id}>
-              <td className="task-title">{task.title}</td>
-              <td>
-                <span className={`status ${task.status}`}>
-                  {task.status === 'in_progress' ? 'ACTIVE' : 
-                   task.status === 'completed' ? 'DONE' : 'TODO'}
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {tasks.length === 0 && (
-        <div className="empty-state">
-          NO TASKS DEFINED
-        </div>
-      )}
     </div>
   );
 }

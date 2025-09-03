@@ -429,7 +429,6 @@ button:active {
 }
 
 .file-tree-compact {
-  border: 1px solid var(--border-color);
   padding: 8px;
   font-size: 11px;
   min-height: 120px;

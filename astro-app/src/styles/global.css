@@ -135,3 +135,113 @@ input:focus, select:focus, textarea:focus {
 .p-1 { padding: 0.5rem; }
 .p-2 { padding: 1rem; }
 .p-4 { padding: 2rem; }
+
+/* React App Specific Styles */
+
+/* TABLES */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+th, td {
+  text-align: left;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  font-weight: bold;
+}
+
+th {
+  background: var(--color-text);
+  color: var(--color-bg);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+tr:hover {
+  cursor: pointer;
+  background: var(--color-hover-bg);
+}
+
+/* STATUS BADGES */
+.status {
+  padding: 2px 6px;
+  border: 1px solid var(--color-border);
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.status.completed {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+.status.in_progress {
+  background: var(--color-hover-bg);
+  color: var(--color-text);
+}
+
+.status.pending {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* FILE TREE */
+.file-tree-compact {
+  border: 1px solid var(--color-border);
+  padding: 8px;
+  font-size: 11px;
+  min-height: 120px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 1rem 0;
+  background: var(--color-bg);
+}
+
+.file-item {
+  font-family: inherit;
+  font-size: 12px;
+  padding: 2px 0;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+/* PROJECT VIEW */
+.project-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 100%;
+}
+
+.project-summary {
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 0;
+  margin-bottom: 0;
+}
+
+.task-title {
+  font-weight: bold;
+  margin: 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px;
+  border: 1px solid var(--color-border);
+  margin: 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.mono {
+  font-family: inherit;
+}

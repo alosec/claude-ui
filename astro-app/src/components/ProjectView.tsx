@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Task, FileNode } from '../types';
+import type { Task, FileNode } from '../types';
 
 export default function ProjectView() {
   const { projectName } = useParams<{ projectName: string }>();

@@ -42,7 +42,6 @@ body {
 table {
   border-collapse: collapse;
   width: 100%;
-  border: 1px solid var(--border-color);
 }
 
 th, td {
@@ -103,8 +102,6 @@ button:active {
   top: 0;
   z-index: 100;
   background: var(--bg-color);
-  border-bottom: 2px solid var(--border-color);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
@@ -414,6 +411,70 @@ button:active {
   }
 }
 
+/* PROJECT VIEW NEOBRUTALIST STYLES */
+.project-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 100%;
+}
+
+.project-summary {
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 0;
+  margin-bottom: 0;
+}
+
+.file-tree-compact {
+  border: 1px solid var(--border-color);
+  padding: 8px;
+  font-size: 11px;
+  min-height: 120px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+.file-tree-compact .file-item {
+  padding: 1px 0;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1.2;
+  cursor: default;
+}
+
+.file-tree-compact .file-item:hover {
+  background: none;
+  color: inherit;
+}
+
+.project-view table {
+  margin: 0;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.project-view th,
+.project-view td {
+  padding: 6px 8px;
+  text-align: left;
+  font-weight: bold;
+}
+
+.project-view .task-title {
+  font-weight: bold;
+  margin: 0;
+}
+
+.project-view .status {
+  font-size: 10px;
+  padding: 2px 4px;
+  font-weight: bold;
+}
+
 /* PRINT STYLES */
 @media print {
   * {
@@ -449,7 +510,7 @@ button:active {
     padding: 2px 4px;
   }
   
-  .file-tree {
+  .file-tree, .file-tree-compact {
     border: 1px solid #000;
     max-height: none;
   }

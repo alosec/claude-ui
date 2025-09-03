@@ -12,10 +12,15 @@ export default function Layout({ children }: LayoutProps) {
     <div className="container">
       <div className="header">
         <div className="row">
-          <h1>Claude UI</h1>
-          <button onClick={toggleTheme}>
-            {theme === 'light' ? '◐' : '◑'} {theme}
-          </button>
+          <div></div>
+          <div className="button-group">
+            <button onClick={() => console.log('Create new project')}>
+              + Create
+            </button>
+            <button onClick={toggleTheme}>
+              {theme === 'light' ? '◐' : '◑'} {theme}
+            </button>
+          </div>
         </div>
       </div>
       <main>

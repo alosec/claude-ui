@@ -125,6 +125,12 @@ button:active {
   margin-bottom: 16px;
 }
 
+.button-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .tabs {
   margin-bottom: 16px;
 }

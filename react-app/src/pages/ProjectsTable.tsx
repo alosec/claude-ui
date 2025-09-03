@@ -38,13 +38,6 @@ export default function ProjectsTable() {
 
   return (
     <div>
-      <div className="row">
-        <div></div>
-        <button onClick={() => console.log('Create new project')}>
-          + Create
-        </button>
-      </div>
-
       <table>
         <thead>
           <tr>

@@ -89,6 +89,14 @@ export interface GitFileChange {
   oldPath?: string; // For renamed files
 }
 
+export interface GitCommit {
+  hash: string;
+  shortHash: string;
+  message: string;
+  author: string;
+  date: string;
+}
+
 export interface GitStatus {
   isRepository: boolean;
   branches: GitBranch[];
@@ -119,6 +127,7 @@ export interface GitAdapter {
   // Repository information
   getRepoStatus(projectPath: string): Promise<GitOperationResult<GitStatus>>;
   getFileChanges(projectPath: string): Promise<GitOperationResult<GitFileChange[]>>;
+  getRecentCommits(projectPath: string, limit?: number): Promise<GitOperationResult<GitCommit[]>>;
   getBranches(projectPath: string): Promise<GitOperationResult<GitBranch[]>>;
   getWorktrees(projectPath: string): Promise<GitOperationResult<GitWorktree[]>>;
   getRemotes(projectPath: string): Promise<GitOperationResult<GitRemote[]>>;

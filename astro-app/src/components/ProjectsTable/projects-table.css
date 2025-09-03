@@ -1,12 +1,23 @@
 /* ProjectsTable Component Styles */
 .projects-table {
   width: 100%;
+}
+
+.projects-table .project-path,
+.projects-table .project-mtime {
   cursor: pointer;
 }
 
-.projects-table tbody tr:hover {
+.projects-table .project-path:hover,
+.projects-table .project-mtime:hover {
   background: var(--button-hover-bg);
   color: var(--button-hover-text);
+}
+
+.projects-table .project-git {
+  width: 300px;
+  min-width: 200px;
+  vertical-align: top;
 }
 
 /* Mobile responsive for tables */

@@ -5,6 +5,7 @@ import type {
   GitStatus, 
   GitRemote, 
   GitFileChange,
+  GitCommit,
   GitOperationResult 
 } from './types';
 
@@ -43,6 +44,22 @@ export class ApiGitAdapter implements GitAdapter {
       return {
         success: false,
         error: `Failed to get file changes: ${error instanceof Error ? error.message : 'Unknown error'}`
+      };
+    }
+  }
+
+  async getRecentCommits(projectPath: string, limit = 5): Promise<GitOperationResult<GitCommit[]>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/git-status.json?project=${encodeURIComponent(projectPath)}&info=commits&limit=${limit}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return { success: true, data: data.commits || [] };
+    } catch (error) {
+      return {
+        success: false,
+        error: `Failed to get recent commits: ${error instanceof Error ? error.message : 'Unknown error'}`
       };
     }
   }

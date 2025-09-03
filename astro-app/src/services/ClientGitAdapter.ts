@@ -5,6 +5,7 @@ import type {
   GitStatus, 
   GitRemote,
   GitFileChange, 
+  GitCommit,
   GitOperationResult 
 } from './types';
 
@@ -122,6 +123,39 @@ export class ClientGitAdapter implements GitAdapter {
       });
   }
 
+  private parseCommits(logOutput: string): GitCommit[] {
+    // Parse git log --oneline format: "shortHash message"
+    // or git log --pretty=format:"%h|%s|%an|%ad" --date=short format
+    return logOutput
+      .split('\n')
+      .filter(line => line.trim())
+      .map(line => {
+        const parts = line.split('|');
+        if (parts.length >= 4) {
+          // Detailed format with hash|message|author|date
+          return {
+            shortHash: parts[0],
+            hash: parts[0], // We don't have full hash in --oneline format
+            message: parts[1],
+            author: parts[2],
+            date: parts[3]
+          };
+        } else {
+          // Simple --oneline format: "shortHash message"
+          const spaceIndex = line.indexOf(' ');
+          const shortHash = line.substring(0, spaceIndex);
+          const message = line.substring(spaceIndex + 1);
+          return {
+            shortHash,
+            hash: shortHash,
+            message,
+            author: 'Unknown',
+            date: 'Unknown'
+          };
+        }
+      });
+  }
+
   async getRepoStatus(projectPath: string): Promise<GitOperationResult<GitStatus>> {
     try {
       // Check if it's a git repository first
@@ -178,6 +212,25 @@ export class ClientGitAdapter implements GitAdapter {
       return {
         success: false,
         error: `Failed to get file changes: ${error instanceof Error ? error.message : 'Unknown error'}`
+      };
+    }
+  }
+
+  async getRecentCommits(projectPath: string, limit = 5): Promise<GitOperationResult<GitCommit[]>> {
+    try {
+      // Use detailed format for better information
+      const logOutput = await this.executeGitCommand(projectPath, [
+        'log',
+        '--pretty=format:%h|%s|%an|%ad',
+        '--date=short',
+        `-${limit}`
+      ]);
+      const commits = this.parseCommits(logOutput);
+      return { success: true, data: commits };
+    } catch (error) {
+      return {
+        success: false,
+        error: `Failed to get recent commits: ${error instanceof Error ? error.message : 'Unknown error'}`
       };
     }
   }

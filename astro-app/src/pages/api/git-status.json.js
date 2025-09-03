@@ -190,10 +190,75 @@ async function getRemotes(projectPath) {
   }
 }
 
+async function getRecentCommits(projectPath, limit = 5) {
+  try {
+    const output = await executeCommand(`git log --pretty=format:"%h|%s|%an|%ad" --date=short -${limit}`, projectPath);
+    if (!output) return [];
+
+    return output.split('\n')
+      .filter(line => line.trim())
+      .map(line => {
+        const [shortHash, message, author, date] = line.split('|');
+        return {
+          hash: shortHash,
+          shortHash,
+          message: message || '',
+          author: author || 'Unknown',
+          date: date || 'Unknown'
+        };
+      });
+  } catch (error) {
+    return [];
+  }
+}
+
+async function getFileChanges(projectPath) {
+  try {
+    const output = await executeCommand('git status --porcelain', projectPath);
+    if (!output) return [];
+
+    return output.split('\n')
+      .filter(line => line.trim())
+      .map(line => {
+        const indexStatus = line.charAt(0);
+        const workTreeStatus = line.charAt(1);
+        const path = line.substring(3);
+        
+        // Determine if staged based on index status
+        const staged = indexStatus !== ' ' && indexStatus !== '?';
+        
+        // Determine status based on git porcelain format
+        let status;
+        if (indexStatus === 'A' || workTreeStatus === 'A') {
+          status = 'added';
+        } else if (indexStatus === 'D' || workTreeStatus === 'D') {
+          status = 'deleted';
+        } else if (indexStatus === 'R' || workTreeStatus === 'R') {
+          status = 'renamed';
+        } else if (indexStatus === 'C' || workTreeStatus === 'C') {
+          status = 'copied';
+        } else if (line.startsWith('??')) {
+          status = 'untracked';
+        } else {
+          status = 'modified';
+        }
+        
+        return {
+          path,
+          status,
+          staged
+        };
+      });
+  } catch (error) {
+    return [];
+  }
+}
+
 export async function GET({ url }) {
   const searchParams = new URL(url).searchParams;
   const project = searchParams.get('project');
-  const info = searchParams.get('info'); // 'branches', 'worktrees', 'remotes', or null for full status
+  const info = searchParams.get('info'); // 'branches', 'worktrees', 'remotes', 'commits', 'changes', or null for full status
+  const limit = parseInt(searchParams.get('limit')) || 5;
 
   if (!project) {
     return new Response(JSON.stringify({ 
@@ -261,6 +326,22 @@ export async function GET({ url }) {
     if (info === 'remotes') {
       const remotes = await getRemotes(projectPath);
       return new Response(JSON.stringify({ remotes }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (info === 'commits') {
+      const commits = await getRecentCommits(projectPath, limit);
+      return new Response(JSON.stringify({ commits }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (info === 'changes') {
+      const fileChanges = await getFileChanges(projectPath);
+      return new Response(JSON.stringify({ fileChanges }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });

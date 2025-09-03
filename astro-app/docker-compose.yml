@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  astro-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4321:4321"
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=4321
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4321/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.astro-app.rule=Host(`your-domain.com`)"
+      - "traefik.http.routers.astro-app.entrypoints=websecure"
+      - "traefik.http.routers.astro-app.tls.certresolver=letsencrypt"
+      - "traefik.http.services.astro-app.loadbalancer.server.port=4321"
+
+networks:
+  default:
+    name: coolify

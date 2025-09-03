@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
 import ViewCard from './ViewCard';
 import FileExplorerView from './FileExplorerView';
-import GitChangesView from './GitChangesView';
 import GitView from './GitView';
 import type { FileSystemItem } from '../../services/FilesystemAdapter';
 import type { GitStatus } from '../../services/GitAdapter';
@@ -15,7 +14,7 @@ interface ViewStackProps {
 interface ViewConfig {
   id: string;
   title: string;
-  component: 'file-explorer' | 'git-changes' | 'git-view';
+  component: 'file-explorer' | 'git';
   expanded: boolean;
   color: string;
 }
@@ -24,24 +23,17 @@ export default function ViewStack({ fileTree, gitStatus }: ViewStackProps) {
   const [viewConfigs, setViewConfigs] = useState<ViewConfig[]>([
     {
       id: 'file-explorer',
-      title: 'File Explorer',
+      title: 'Files',
       component: 'file-explorer',
       expanded: true,
       color: 'var(--card-color-1)'
     },
     {
-      id: 'git-changes',
-      title: 'Git Changes',
-      component: 'git-changes',
+      id: 'git',
+      title: 'Git',
+      component: 'git',
       expanded: false,
       color: 'var(--card-color-2)'
-    },
-    {
-      id: 'git-view',
-      title: 'Git Status',
-      component: 'git-view',
-      expanded: false,
-      color: 'var(--card-color-3)'
     }
   ]);
   
@@ -87,9 +79,7 @@ export default function ViewStack({ fileTree, gitStatus }: ViewStackProps) {
     switch (viewConfig.component) {
       case 'file-explorer':
         return <FileExplorerView fileTree={fileTree} />;
-      case 'git-changes':
-        return <GitChangesView gitStatus={gitStatus} />;
-      case 'git-view':
+      case 'git':
         return <GitView gitStatus={gitStatus} />;
       default:
         return null;

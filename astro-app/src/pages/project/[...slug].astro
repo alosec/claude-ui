@@ -1,0 +1,11 @@
+---
+import Layout from '../../components/Layout.astro';
+import App from '../../components/App.tsx';
+
+// This catch-all route handles all /project/* URLs
+// and serves the React app, allowing React Router to handle the routing
+---
+
+<Layout title="Claude UI">
+  <App client:only="react" />
+</Layout>

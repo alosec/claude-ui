@@ -1,103 +1,94 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
-interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  status: 'pending' | 'in_progress' | 'completed';
-  createdAt: string;
-  updatedAt: string;
-  projectName: string;
-}
-
-interface FileNode {
-  name: string;
-  path: string;
-  type: 'file' | 'directory';
-  children?: FileNode[];
-  size?: number;
-}
+import { getFilesystemAdapter, type FileSystemItem } from '../../services/FilesystemAdapter';
+import { getGitAdapter, type GitStatus } from '../../services/GitAdapter';
 import FileTree from '../../components/FileTree/FileTree';
+import GitStatusBar from '../../components/GitStatusBar/GitStatusBar';
 import './project-view.css';
 
 export default function ProjectView() {
   const { projectName } = useParams<{ projectName: string }>();
-  const [, setTasks] = useState<Task[]>([]);
-  const [fileTree, setFileTree] = useState<FileNode[]>([]);
+  const [fileTree, setFileTree] = useState<FileSystemItem | null>(null);
+  const [gitStatus, setGitStatus] = useState<GitStatus | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Mock data - will be replaced with actual API calls
-    const mockTasks: Task[] = [
-      {
-        id: '1',
-        title: 'Set up project structure',
-        description: 'Initialize React app with TypeScript and Vite',
-        status: 'completed',
-        createdAt: '2025-01-15T10:00:00Z',
-        updatedAt: '2025-01-15T11:00:00Z',
-        projectName: projectName || '',
-      },
-      {
-        id: '2',
-        title: 'Create table-based UI',
-        description: 'Implement projects table and task management',
-        status: 'in_progress',
-        createdAt: '2025-01-15T11:00:00Z',
-        updatedAt: '2025-01-15T12:00:00Z',
-        projectName: projectName || '',
-      },
-      {
-        id: '3',
-        title: 'Add file tree viewer',
-        description: 'Display project files in a tree structure',
-        status: 'pending',
-        createdAt: '2025-01-15T12:00:00Z',
-        updatedAt: '2025-01-15T12:00:00Z',
-        projectName: projectName || '',
+    async function loadProjectData() {
+      if (!projectName) {
+        setError('Project name is required');
+        setLoading(false);
+        return;
       }
-    ];
 
-    const mockFileTree: FileNode[] = [
-      {
-        name: 'src',
-        path: `/src`,
-        type: 'directory',
-        children: [
-          { name: 'App.tsx', path: `/src/App.tsx`, type: 'file', size: 1234 },
-          { name: 'main.tsx', path: `/src/main.tsx`, type: 'file', size: 567 },
-          {
-            name: 'components',
-            path: `/src/components`,
-            type: 'directory',
-            children: [
-              { name: 'Layout.tsx', path: `/src/components/Layout.tsx`, type: 'file', size: 890 }
-            ]
-          }
-        ]
-      },
-      { name: 'package.json', path: `/package.json`, type: 'file', size: 2345 },
-      { name: 'vite.config.ts', path: `/vite.config.ts`, type: 'file', size: 456 }
-    ];
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const filesystemAdapter = getFilesystemAdapter();
+        const gitAdapter = getGitAdapter();
+        
+        // Load filesystem and git data in parallel
+        const [filesystemResult, gitResult] = await Promise.all([
+          filesystemAdapter.getProjectTree(projectName, 4),
+          gitAdapter.getRepoStatus(projectName).catch(() => ({ success: false, error: 'Git not available' }))
+        ]);
+        
+        if (filesystemResult.success && filesystemResult.data) {
+          setFileTree(filesystemResult.data);
+        } else {
+          setError(filesystemResult.error || 'Failed to load project tree');
+          return;
+        }
 
-    setTimeout(() => {
-      setTasks(mockTasks);
-      setFileTree(mockFileTree);
-      setLoading(false);
-    }, 500);
+        if (gitResult.success && gitResult.data) {
+          setGitStatus(gitResult.data);
+        } else {
+          // Git failure is not fatal - project may not be a git repository
+          console.log('Git status not available:', gitResult.error);
+          setGitStatus(null);
+        }
+      } catch (err) {
+        console.error('Error loading project data:', err);
+        setError('An unexpected error occurred while loading project data');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProjectData();
   }, [projectName]);
 
   if (loading) {
     return <div>Loading project...</div>;
   }
 
+  if (error) {
+    return (
+      <div className="error-state">
+        <p>Error loading project: {error}</p>
+        <button onClick={() => window.location.reload()}>
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  if (!fileTree) {
+    return <div>No project data available</div>;
+  }
+
   return (
     <div className="project-view">
-      <div className="project-path-header">
-        ~/projects/{projectName?.toLowerCase()}/
+      <div className="project-header">
+        <div className="project-path-header">
+          {fileTree.path}/
+        </div>
+        {gitStatus && (
+          <GitStatusBar gitStatus={gitStatus} variant="compact" />
+        )}
       </div>
-      <FileTree fileTree={fileTree} />
+      <FileTree fileTree={fileTree.children || []} />
     </div>
   );
 }

@@ -1,14 +1,36 @@
 ---
 import Layout from '../components/Layout.astro';
+import App from '../components/App.tsx';
 ---
 
 <Layout title="404 - Page Not Found">
+  <!-- Check if this is a client-side route that React Router should handle -->
+  <script>
+    // If URL contains /project/ and we're running client-side, load the React app
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/project/')) {
+      // Hide the 404 content and load the React app instead
+      document.addEventListener('DOMContentLoaded', function() {
+        const errorContainer = document.querySelector('.error-container');
+        const appContainer = document.querySelector('.react-app-container');
+        if (errorContainer && appContainer) {
+          errorContainer.style.display = 'none';
+          appContainer.style.display = 'block';
+        }
+      });
+    }
+  </script>
+  
   <div class="error-container">
     <div class="error-content">
       <h1>404</h1>
       <p>Page not found</p>
       <a href="/" class="back-link">← Back to home</a>
     </div>
+  </div>
+  
+  <!-- React app container for client-side routing fallback -->
+  <div class="react-app-container" style="display: none;">
+    <App client:only="react" />
   </div>
 </Layout>
 

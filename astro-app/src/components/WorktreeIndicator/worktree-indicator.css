@@ -1,0 +1,16 @@
+.worktree-indicator {
+  display: inline-block;
+  font-family: monospace;
+  font-size: 0.875rem;
+}
+
+.worktree-current {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.worktree-count {
+  font-weight: bold;
+  font-size: 0.8125rem;
+}

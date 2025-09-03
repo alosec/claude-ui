@@ -1,0 +1,33 @@
+.branch-indicator {
+  display: inline-block;
+  font-family: monospace;
+  font-size: 0.875rem;
+}
+
+.branch-current {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.branch-name {
+  font-weight: bold;
+}
+
+.branch-default-badge {
+  font-size: 0.75rem;
+}
+
+.branch-sync-status {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sync-ahead {
+  font-size: 0.75rem;
+}
+
+.sync-behind {
+  font-size: 0.75rem;
+}

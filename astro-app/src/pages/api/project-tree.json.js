@@ -1,37 +1,12 @@
 import fs from 'fs/promises';
 import path from 'path';
+import { DEFAULT_WORKSPACE_SETTINGS, SETTINGS, SettingsUtils } from '../../config/settings.ts';
 
-const WORKSPACE_PATH = process.env.WORKSPACE_PATH || '/home/alex/code';
+const WORKSPACE_PATH = process.env.WORKSPACE_PATH || SETTINGS.DEFAULT_WORKSPACE_PATH;
 
-const IGNORE_PATTERNS = [
-  'node_modules',
-  '.git',
-  '.DS_Store',
-  '.env',
-  '.env.local',
-  'dist',
-  'build',
-  '.next',
-  '.astro',
-  'coverage',
-  '.nyc_output',
-  '__pycache__',
-  '*.pyc',
-  '.pytest_cache',
-  '.vscode',
-  '.idea',
-  '*.log',
-  '.cache'
-];
-
+// Use settings-based ignore patterns
 function shouldIgnore(name) {
-  return IGNORE_PATTERNS.some(pattern => {
-    if (pattern.includes('*')) {
-      const regex = new RegExp(pattern.replace('*', '.*'));
-      return regex.test(name);
-    }
-    return name === pattern || name.startsWith(pattern);
-  });
+  return SettingsUtils.shouldIgnoreFile(name, DEFAULT_WORKSPACE_SETTINGS.ignorePatterns);
 }
 
 async function buildFileTree(dirPath, maxDepth = 3, currentDepth = 0) {
@@ -61,11 +36,13 @@ async function buildFileTree(dirPath, maxDepth = 3, currentDepth = 0) {
           tree.children.push(subtree);
         }
       } else {
+        const metadata = await getFileMetadata(fullPath);
         tree.children.push({
           name: entry.name,
           type: 'file',
           path: fullPath,
-          size: await getFileSize(fullPath)
+          size: metadata.size,
+          lastModified: metadata.lastModified
         });
       }
     }
@@ -85,12 +62,18 @@ async function buildFileTree(dirPath, maxDepth = 3, currentDepth = 0) {
   }
 }
 
-async function getFileSize(filePath) {
+async function getFileMetadata(filePath) {
   try {
     const stats = await fs.stat(filePath);
-    return stats.size;
+    return {
+      size: stats.size,
+      lastModified: stats.mtime.toISOString()
+    };
   } catch (error) {
-    return 0;
+    return {
+      size: 0,
+      lastModified: new Date().toISOString()
+    };
   }
 }
 

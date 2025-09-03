@@ -1,47 +1,52 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-interface Project {
-  name: string;
-  path: string;
-  lastModified: string;
-  status: 'active' | 'inactive';
-  taskCount?: number;
-}
+import { getFilesystemAdapter, type Project } from '../../services/FilesystemAdapter';
 import './projects-table.css';
 
 export default function ProjectsTable() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Mock data for now - will be replaced with actual API calls
-    const mockProjects: Project[] = [
-      {
-        name: 'claude-ui',
-        path: '~/code/claude-ui',
-        lastModified: '2025-01-15',
-        status: 'active',
-        taskCount: 3
-      },
-      {
-        name: 'example-project',
-        path: '~/code/example-project',
-        lastModified: '2025-01-10',
-        status: 'inactive',
-        taskCount: 0
+    async function loadProjects() {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const filesystemAdapter = getFilesystemAdapter();
+        const result = await filesystemAdapter.listProjects();
+        
+        if (result.success && result.data) {
+          setProjects(result.data);
+        } else {
+          setError(result.error || 'Failed to load projects');
+        }
+      } catch (err) {
+        console.error('Error loading projects:', err);
+        setError('An unexpected error occurred while loading projects');
+      } finally {
+        setLoading(false);
       }
-    ];
+    }
 
-    setTimeout(() => {
-      setProjects(mockProjects);
-      setLoading(false);
-    }, 500);
+    loadProjects();
   }, []);
 
   if (loading) {
     return <div>Loading projects...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="error-state">
+        <p>Error loading projects: {error}</p>
+        <button onClick={() => window.location.reload()}>
+          Retry
+        </button>
+      </div>
+    );
   }
 
   return (

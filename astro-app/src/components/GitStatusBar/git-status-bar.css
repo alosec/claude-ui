@@ -1,0 +1,46 @@
+.git-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  font-family: monospace;
+}
+
+.git-status-main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.git-status-changes {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+}
+
+.status-count {
+  font-family: monospace;
+  font-weight: bold;
+}
+
+.status-label {
+  font-size: 0.75rem;
+}
+
+.git-status-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.uncommitted-indicator {
+  display: flex;
+  align-items: center;
+}

@@ -11,7 +11,9 @@ export default defineConfig({
     AstroPWA({
       registerType: 'autoUpdate',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        navigateFallback: '/404',
+        navigateFallbackAllowlist: [/^\/project\//]
       },
       includeAssets: ['icon-192.png', 'icon-512.png'],
       manifest: {
@@ -24,6 +26,7 @@ export default defineConfig({
         orientation: 'portrait',
         scope: '/',
         start_url: '/',
+        navigation_scope: '/',
         icons: [
           {
             src: 'icon-192.png',

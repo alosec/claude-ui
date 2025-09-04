@@ -1,0 +1,88 @@
+# Claude Rules: Spec-Driven AI Programming Environment
+
+## Project Vision
+This is a **spec-driven AI programming environment** where LLMs function as "automatic compilers" transforming natural language specifications into working applications with comprehensive test suites.
+
+## Architecture Patterns
+
+### Multi-Environment Strategy
+- **Astro wrapper**: Enables deployment as web app, PWA, and Electron desktop app
+- **React components**: Core UI logic remains environment-agnostic  
+- **Environment detection**: Automatic switching between web APIs and native filesystem access
+- **Service layer abstraction**: Identical interfaces across all deployment targets
+
+### Filesystem Integration
+- **Real workspace connection**: Connected to actual developer filesystem (~/code)
+- **Security sandbox**: All operations constrained to configured workspace directory
+- **Performance optimization**: Ignore patterns, depth limits, file size constraints
+- **Cross-platform compatibility**: Works in browser and native desktop contexts
+
+### Component Architecture
+- **Component-scoped CSS**: Each component imports its own stylesheet
+- **Modular services**: Filesystem, authentication, and configuration as separate services
+- **React Router integration**: Client-side navigation within Astro wrapper
+- **Theme system**: Global CSS variables with component-specific implementations
+
+## Development Workflow
+
+### Memory Bank Priority
+- **Always read memory bank first**: Essential for understanding current project state
+- **Update after significant changes**: Keep documentation aligned with code reality
+- **Vision-driven development**: All technical decisions support spec-to-code compilation goal
+
+### Code Generation Preparation
+- **LLM API integration**: Next major milestone for spec processing
+- **Validation pipeline**: Generated code must pass tests against specifications
+- **Real project generation**: Use filesystem services to create actual project files
+
+### Quality Standards
+- **Production-ready foundation**: Architecture must support real-world deployment
+- **Security first**: Authentication, path validation, and data protection built-in
+- **Performance conscious**: Optimized for large codebases and complex specifications
+
+## Technical Conventions
+
+### File Organization
+```
+src/
+├── components/         # React components with .css imports
+├── services/          # Business logic and external integrations  
+├── config/           # Application settings and workspace configuration
+├── contexts/         # React state management
+├── styles/           # Global styles and theme definitions
+└── pages/            # Astro pages and API endpoints
+```
+
+### API Design
+- **RESTful endpoints**: `/api/*.json` for all backend operations
+- **Consistent interfaces**: Same method signatures across service implementations
+- **Error handling**: Graceful degradation and user-friendly error messages
+- **Type safety**: Full TypeScript coverage for all service interfaces
+
+### Testing Strategy
+- **Multi-environment testing**: Playwright tests for web and Electron
+- **Integration focus**: Test complete user workflows, not isolated units
+- **Visual testing**: Headed test modes for UI verification
+- **Future LLM testing**: Validate generated code against original specifications
+
+## Future LLM Integration Guidelines
+
+### Specification Processing
+- **Natural language input**: Specs written in conversational, human-readable format
+- **Structured extraction**: LLM parses requirements, constraints, and behaviors
+- **Completeness validation**: Identify gaps or ambiguities in specifications
+- **Iterative refinement**: Feedback loops for specification improvement
+
+### Code Generation Quality
+- **Architecture conformance**: Generated code follows established project patterns
+- **Test completeness**: Comprehensive test suites generated alongside implementation
+- **Performance standards**: Generated solutions meet specified performance criteria
+- **Security compliance**: All generated code includes appropriate security measures
+
+### Validation Pipeline
+- **Real-time feedback**: Streaming responses during code generation
+- **Automatic testing**: Generated code tested against specification requirements
+- **Human review points**: Critical decision points require human confirmation
+- **Continuous improvement**: Learn from successful generations to improve future outputs
+
+This project represents a fundamental shift from traditional programming to **specification authoring**, where human creativity focuses on *what* should be built while AI handles the *how* of implementation.

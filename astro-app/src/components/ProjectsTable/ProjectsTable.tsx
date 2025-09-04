@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFilesystemAdapter, type Project } from '../../services/FilesystemAdapter';
+import { getFilesystemAdapter, isDemoMode, type Project } from '../../services/FilesystemAdapter';
 import ProjectGitInfo from './ProjectGitInfo';
 import './projects-table.css';
 
@@ -8,6 +8,7 @@ export default function ProjectsTable() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDemo, setIsDemo] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,8 +17,12 @@ export default function ProjectsTable() {
         setLoading(true);
         setError(null);
         
-        const filesystemAdapter = getFilesystemAdapter();
+        const filesystemAdapter = await getFilesystemAdapter();
         const result = await filesystemAdapter.listProjects();
+        
+        // Check if we're in demo mode
+        const demoMode = await isDemoMode();
+        setIsDemo(demoMode);
         
         if (result.success && result.data) {
           setProjects(result.data);
@@ -52,6 +57,15 @@ export default function ProjectsTable() {
 
   return (
     <div>
+      {isDemo && (
+        <div className="demo-mode-banner">
+          <span className="demo-indicator">🧪 Demo Mode</span>
+          <span className="demo-description">
+            Showing sample projects. For full functionality, deploy on a server with file system access.
+          </span>
+        </div>
+      )}
+      
       <table className="projects-table">
         <thead>
           <tr>
@@ -86,9 +100,15 @@ export default function ProjectsTable() {
         </tbody>
       </table>
 
-      {projects.length === 0 && (
+      {projects.length === 0 && !isDemo && (
         <div className="empty-state">
           No projects found. Create your first project to get started.
+        </div>
+      )}
+      
+      {projects.length === 0 && isDemo && (
+        <div className="empty-state">
+          Demo data loading... If you're seeing this, there may be an issue with the demo adapter.
         </div>
       )}
     </div>

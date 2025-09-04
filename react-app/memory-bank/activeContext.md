@@ -105,4 +105,27 @@ Natural Language → AI Analysis → Generated Code → Production
 
 *Suspected causes*: Service worker caching issues, React Router state loss, or PWA navigation handling during app switching*
 
+## North Star: Elegant Multi-Deployment Solution
+
+### 🎯 **Critical Architecture Decision Needed**
+**Unified Build Strategy**: Need to analyze existing feature branch configuration and design elegant solution for handling both deployment patterns:
+
+1. **Server-Side Deployment** (VPS/Node.js)
+   - Current: `output: 'server'` with Node adapter
+   - Benefits: Full filesystem access, real project data
+   - Use case: Production environments with server capabilities
+
+2. **Static Deployment** (Cloudflare Pages/JAMstack)
+   - Required: `output: 'static'` or `output: 'hybrid'` 
+   - Benefits: CDN distribution, demo capability
+   - Challenge: No server-side filesystem access (solved with fallback system)
+
+### **Implementation Requirements**
+- **Build Configuration**: Conditional config based on deployment target
+- **Environment Detection**: Runtime adapter selection (already implemented)
+- **Graceful Degradation**: Seamless fallback to demo mode on static hosting
+- **Developer Experience**: Single codebase, multiple deployment targets
+
+*Priority: High - enables broader deployment flexibility and demo capabilities*
+
 The foundation is **complete and production-ready**. The next phase focuses on **LLM integration** to enable the revolutionary spec-to-code compilation vision.

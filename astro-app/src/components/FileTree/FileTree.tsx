@@ -52,7 +52,7 @@ export default function FileTree({ fileTree }: FileTreeProps) {
       setError(null);
 
       try {
-        const adapter = getFilesystemAdapter();
+        const adapter = await getFilesystemAdapter();
         const result = await adapter.readFile(file.path);
         
         if (result.success && result.data) {

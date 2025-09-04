@@ -26,7 +26,7 @@ export default function ProjectView() {
         setLoading(true);
         setError(null);
         
-        const filesystemAdapter = getFilesystemAdapter();
+        const filesystemAdapter = await getFilesystemAdapter();
         const gitAdapter = getGitAdapter();
         
         // Load filesystem and git data in parallel

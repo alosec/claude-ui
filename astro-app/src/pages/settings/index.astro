@@ -1,5 +1,9 @@
 ---
 const currentWorkspacePath = process.env.WORKSPACE_PATH || '/home/alex/code';
+
+// Import CSS files using Vite
+import '../../styles/global.css';
+import '../../styles/theme.css';
 ---
 
 <html lang="en" data-theme="light">
@@ -9,8 +13,6 @@ const currentWorkspacePath = process.env.WORKSPACE_PATH || '/home/alex/code';
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="generator" content={Astro.generator} />
     <title>Claude UI - Settings</title>
-    <link rel="stylesheet" href="/src/styles/global.css" />
-    <link rel="stylesheet" href="/src/styles/themes.css" />
     <script src="/src/scripts/theme.js"></script>
     <style>
       body {

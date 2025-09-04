@@ -6,6 +6,15 @@ export interface Props {
 }
 
 const { title, maxWidth = "800px" } = Astro.props;
+
+// Import CSS files using Vite
+import '../styles/global.css';
+import '../styles/theme.css';
+import '../styles/typography.css';
+import '../styles/components/button.css';
+import '../styles/components/table.css';
+import '../styles/components/status.css';
+import '../styles/print.css';
 ---
 
 <html lang="en" data-theme="light">
@@ -19,13 +28,6 @@ const { title, maxWidth = "800px" } = Astro.props;
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <link rel="manifest" href="/manifest.json" />
     <title>{title}</title>
-    <link rel="stylesheet" href="/src/styles/global.css" />
-    <link rel="stylesheet" href="/src/styles/theme.css" />
-    <link rel="stylesheet" href="/src/styles/typography.css" />
-    <link rel="stylesheet" href="/src/styles/components/button.css" />
-    <link rel="stylesheet" href="/src/styles/components/table.css" />
-    <link rel="stylesheet" href="/src/styles/components/status.css" />
-    <link rel="stylesheet" href="/src/styles/print.css" />
     <script src="/src/scripts/theme.js"></script>
   </head>
   <body>

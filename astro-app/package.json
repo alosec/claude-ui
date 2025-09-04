@@ -8,6 +8,8 @@
     "dev:4321": "node start-dev-4321.js",
     "dev:8081": "node start-dev-8081.js",
     "build": "astro build",
+    "build:vps": "astro build",
+    "build:cloudflare": "CF_PAGES=1 astro build",
     "preview": "astro preview",
     "astro": "astro",
     "test": "playwright test",
@@ -23,6 +25,7 @@
     "dist": "astro build && electron-builder --publish=never"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.7",
     "@astrojs/node": "^9.4.3",
     "@astrojs/react": "^4.3.0",
     "@types/react": "^19.1.12",

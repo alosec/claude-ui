@@ -1,3 +1,5 @@
+import { DeploymentManager } from '../config/deployment';
+
 /**
  * Environment detection service to determine the runtime environment
  * and whether filesystem APIs are available.
@@ -6,6 +8,7 @@ export class EnvironmentDetector {
   private static _isNativeEnvironment: boolean | null = null;
   private static _isApiAvailable: boolean | null = null;
   private static _isStaticHosting: boolean | null = null;
+  private static _isCloudflare: boolean | null = null;
 
   /**
    * Check if running in a native environment (Electron/Tauri)
@@ -31,6 +34,43 @@ export class EnvironmentDetector {
   }
 
   /**
+   * Check if we're running on Cloudflare (Workers or Pages)
+   */
+  static isCloudflare(): boolean {
+    if (this._isCloudflare !== null) {
+      return this._isCloudflare;
+    }
+
+    // Check deployment config first
+    const deploymentConfig = DeploymentManager.getConfig();
+    if (deploymentConfig.target === 'cloudflare') {
+      this._isCloudflare = true;
+      return true;
+    }
+
+    // Server-side detection
+    if (typeof window === 'undefined') {
+      this._isCloudflare = typeof globalThis.caches !== 'undefined' ||
+                           process.env.CF_PAGES === '1' ||
+                           process.env.CLOUDFLARE_WORKERS === '1';
+      return this._isCloudflare;
+    }
+
+    // Client-side detection
+    const hostname = window.location.hostname;
+    const cloudflarePatterns = [
+      /\.pages\.dev$/,          // Cloudflare Pages
+      /\.workers\.dev$/,        // Cloudflare Workers
+    ];
+
+    this._isCloudflare = cloudflarePatterns.some(pattern => 
+      pattern.test(hostname)
+    );
+
+    return this._isCloudflare;
+  }
+
+  /**
    * Check if we're likely running on static hosting (like Cloudflare Pages)
    * where server-side APIs aren't available
    */
@@ -40,9 +80,9 @@ export class EnvironmentDetector {
     }
 
     if (typeof window === 'undefined') {
-      // Server-side, assume we have API capabilities
-      this._isStaticHosting = false;
-      return false;
+      // Server-side, check if we're on Cloudflare
+      this._isStaticHosting = this.isCloudflare();
+      return this._isStaticHosting;
     }
 
     // Check for common static hosting indicators
@@ -78,6 +118,13 @@ export class EnvironmentDetector {
       return true;
     }
 
+    // If we're on Cloudflare, API availability depends on deployment configuration
+    if (this.isCloudflare()) {
+      const deploymentConfig = DeploymentManager.getConfig();
+      this._isApiAvailable = deploymentConfig.useFilesystemAPI;
+      return this._isApiAvailable;
+    }
+
     // If we're likely on static hosting, don't even try
     if (this.isStaticHosting()) {
       this._isApiAvailable = false;
@@ -108,6 +155,7 @@ export class EnvironmentDetector {
     this._isNativeEnvironment = null;
     this._isApiAvailable = null;
     this._isStaticHosting = null;
+    this._isCloudflare = null;
   }
 
   /**
@@ -116,16 +164,21 @@ export class EnvironmentDetector {
   static getEnvironmentInfo(): {
     isNativeEnvironment: boolean;
     isStaticHosting: boolean;
+    isCloudflare: boolean;
     isApiAvailable: boolean | null;
     userAgent: string;
     hostname: string;
+    deploymentTarget: string;
   } {
+    const deploymentConfig = DeploymentManager.getConfig();
     return {
       isNativeEnvironment: this.isNativeEnvironment(),
       isStaticHosting: this.isStaticHosting(),
+      isCloudflare: this.isCloudflare(),
       isApiAvailable: this._isApiAvailable,
       userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'N/A',
-      hostname: typeof window !== 'undefined' ? window.location.hostname : 'N/A'
+      hostname: typeof window !== 'undefined' ? window.location.hostname : 'N/A',
+      deploymentTarget: deploymentConfig.target
     };
   }
 }

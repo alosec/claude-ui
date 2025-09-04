@@ -3,40 +3,60 @@ import { ApiFilesystemAdapter } from './ApiFilesystemAdapter';
 import { ClientFilesystemAdapter } from './ClientFilesystemAdapter';
 import { MockFilesystemAdapter } from './MockFilesystemAdapter';
 import { EnvironmentDetector } from './EnvironmentDetector';
+import { DeploymentManager } from '../config/deployment';
 
 // Factory function to create appropriate filesystem adapter
 export async function createFilesystemAdapter(): Promise<FilesystemAdapter> {
+  const deploymentConfig = DeploymentManager.getConfig();
+  
+  console.info(`🌍 Creating filesystem adapter for ${deploymentConfig.target} deployment`);
+
   // If running in native environment (Electron/Tauri), use client adapter
   if (EnvironmentDetector.isNativeEnvironment()) {
+    console.info('Native environment detected, using client filesystem');
     return new ClientFilesystemAdapter();
   }
 
-  // If we're on static hosting, go straight to mock adapter
-  if (EnvironmentDetector.isStaticHosting()) {
-    console.info('Static hosting detected, using demo mode');
-    return new MockFilesystemAdapter();
+  // For Cloudflare deployment, use mock data by default
+  if (deploymentConfig.target === 'cloudflare') {
+    if (deploymentConfig.useMockData) {
+      console.info('Cloudflare deployment with mock data enabled');
+      return new MockFilesystemAdapter();
+    } else {
+      // In future, we could support Cloudflare D1 or R2 for data storage
+      console.info('Cloudflare deployment - falling back to mock data');
+      return new MockFilesystemAdapter();
+    }
   }
 
-  // Test if API endpoints are available
-  const isApiAvailable = await EnvironmentDetector.testApiAvailability();
-  
-  if (isApiAvailable) {
-    console.info('API endpoints available, using server filesystem');
-    return new ApiFilesystemAdapter();
-  } else {
-    console.info('API endpoints unavailable, falling back to demo mode');
-    return new MockFilesystemAdapter();
+  // For VPS deployment, test API availability
+  if (deploymentConfig.useFilesystemAPI) {
+    const isApiAvailable = await EnvironmentDetector.testApiAvailability();
+    
+    if (isApiAvailable) {
+      console.info('VPS deployment - API endpoints available');
+      return new ApiFilesystemAdapter();
+    } else {
+      console.warn('VPS deployment - API endpoints unavailable, falling back to demo mode');
+      return new MockFilesystemAdapter();
+    }
   }
+
+  // Default fallback
+  console.info('Using demo mode as fallback');
+  return new MockFilesystemAdapter();
 }
 
 // Synchronous factory for backward compatibility
 export function createFilesystemAdapterSync(): FilesystemAdapter {
+  const deploymentConfig = DeploymentManager.getConfig();
+  
   if (EnvironmentDetector.isNativeEnvironment()) {
     return new ClientFilesystemAdapter();
-  } else if (EnvironmentDetector.isStaticHosting()) {
+  } else if (deploymentConfig.target === 'cloudflare' || deploymentConfig.useMockData) {
     return new MockFilesystemAdapter();
   } else {
-    // Default to API adapter, will fail gracefully if needed
+    // Default to API adapter for VPS deployment, will fail gracefully if needed
     return new ApiFilesystemAdapter();
   }
 }
@@ -80,6 +100,7 @@ export function resetFilesystemAdapter(): void {
   adapterInstance = null;
   adapterPromise = null;
   EnvironmentDetector.reset();
+  DeploymentManager.reset();
 }
 
 // Export types for convenience

@@ -2,7 +2,28 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import node from '@astrojs/node';
+import cloudflare from '@astrojs/cloudflare';
 import AstroPWA from '@vite-pwa/astro';
+
+// Deployment configuration
+const isCloudflare = process.env.CF_PAGES === '1' || process.env.CLOUDFLARE_WORKERS === '1';
+const isDev = process.env.NODE_ENV === 'development';
+
+// Choose adapter and output directory based on deployment target
+const adapter = isCloudflare 
+  ? cloudflare({
+      platformProxy: {
+        enabled: true
+      }
+    })
+  : node({
+      mode: 'standalone'
+    });
+
+const outputDir = isCloudflare ? './dist-cf' : './dist-vps';
+
+console.log(`🚀 Using ${isCloudflare ? 'Cloudflare' : 'Node'} adapter`);
+console.log(`📁 Output directory: ${outputDir}`);
 
 // https://astro.build/config
 export default defineConfig({
@@ -45,7 +66,6 @@ export default defineConfig({
     })
   ],
   output: 'server',
-  adapter: node({
-    mode: 'standalone'
-  })
+  outDir: outputDir,
+  adapter
 });

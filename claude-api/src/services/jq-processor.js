@@ -4,14 +4,30 @@ import { Transform } from 'stream';
 import { pipeline } from 'stream/promises';
 import winston from 'winston';
 
-const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  defaultMeta: { service: 'jq-processor' }
-});
+// Create logger based on environment
+const logger = (() => {
+  if (process.env.NODE_ENV === 'test') {
+    return winston.createLogger({
+      level: 'error',
+      format: winston.format.json(),
+      defaultMeta: { service: 'jq-processor' },
+      transports: [],
+      silent: true
+    });
+  }
+  
+  return winston.createLogger({
+    level: process.env.LOG_LEVEL || 'info',
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.json()
+    ),
+    defaultMeta: { service: 'jq-processor' },
+    transports: [
+      new winston.transports.Console()
+    ]
+  });
+})();
 
 class JQProcessor {
   constructor() {

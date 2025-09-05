@@ -54,7 +54,7 @@ export default function ProjectsTable() {
       <table className="projects-table">
         <thead>
           <tr>
-            <th>path</th>
+            <th></th>
             <th>mtime</th>
           </tr>
         </thead>

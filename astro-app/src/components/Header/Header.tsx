@@ -26,13 +26,6 @@ export default function Header() {
         
         <div className="app-header-right">
           <button 
-            className="header-btn"
-            onClick={() => console.log('Create new project')}
-            aria-label="Create new project"
-          >
-            +
-          </button>
-          <button 
             className="header-btn theme-btn"
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}

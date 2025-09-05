@@ -3,6 +3,23 @@
   width: 100%;
 }
 
+.projects-table th,
+.projects-table td {
+  border: none;
+}
+
+.projects-table th:first-child {
+  background: transparent;
+  padding: 0;
+}
+
+.projects-table th:last-child,
+.projects-table td:last-child {
+  background: transparent;
+  text-align: center;
+  color: var(--text-color);
+}
+
 .projects-table tbody tr {
   cursor: pointer;
 }

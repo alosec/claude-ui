@@ -4,14 +4,30 @@ import { pipeline } from 'stream/promises';
 import winston from 'winston';
 import { v4 as uuidv4 } from 'uuid';
 
-const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  defaultMeta: { service: 'claude-cli' }
-});
+// Create logger based on environment
+const logger = (() => {
+  if (process.env.NODE_ENV === 'test') {
+    return winston.createLogger({
+      level: 'error',
+      format: winston.format.json(),
+      defaultMeta: { service: 'claude-cli' },
+      transports: [],
+      silent: true
+    });
+  }
+  
+  return winston.createLogger({
+    level: process.env.LOG_LEVEL || 'info',
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.json()
+    ),
+    defaultMeta: { service: 'claude-cli' },
+    transports: [
+      new winston.transports.Console()
+    ]
+  });
+})();
 
 class ClaudeCLI {
   constructor() {

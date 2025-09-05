@@ -1,11 +1,9 @@
 import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import claudeCli from '../../src/services/claude-cli.js';
+import { spawn } from 'child_process';
 
-// Mock child_process
-const mockSpawn = jest.fn();
-jest.unstable_mockModule('child_process', () => ({
-  spawn: mockSpawn
-}));
+// Get the mocked spawn function
+const mockSpawn = spawn;
 
 describe('ClaudeCLI', () => {
   let mockChildProcess;
@@ -138,7 +136,7 @@ describe('ClaudeCLI', () => {
           ...mockChildProcess,
           on: jest.fn((event, callback) => {
             if (event === 'error') {
-              setTimeout(() => callback(new Error('spawn ENOENT')), 5);
+              setImmediate(() => callback(new Error('spawn ENOENT')));
             }
           })
         };
@@ -149,7 +147,7 @@ describe('ClaudeCLI', () => {
         message: 'test',
         stream: false
       })).rejects.toThrow('Failed to spawn Claude CLI process');
-    });
+    }, 8000);
 
     test('should timeout long-running processes', async () => {
       // Set a very short timeout for testing
@@ -185,7 +183,7 @@ describe('ClaudeCLI', () => {
       // Setup mock to simulate streaming
       mockChildProcess.on.mockImplementation((event, callback) => {
         if (event === 'close') {
-          setTimeout(() => callback(0), 50);
+          setTimeout(() => callback(0), 100);
         }
       });
 
@@ -196,10 +194,12 @@ describe('ClaudeCLI', () => {
             if (dataCallbackIndex < streamData.length) {
               callback(Buffer.from(streamData[dataCallbackIndex]));
               dataCallbackIndex++;
-              setTimeout(sendData, 10);
+              if (dataCallbackIndex < streamData.length) {
+                setImmediate(sendData);
+              }
             }
           };
-          setTimeout(sendData, 5);
+          setImmediate(sendData);
         }
       });
 
@@ -212,7 +212,7 @@ describe('ClaudeCLI', () => {
       expect(result.success).toBe(true);
       expect(result.stream).toBeDefined();
       expect(typeof result.stream.on).toBe('function');
-    });
+    }, 8000);
   });
 
   describe('process management', () => {

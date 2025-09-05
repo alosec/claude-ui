@@ -7,11 +7,11 @@
   "scripts": {
     "dev": "NODE_ENV=development node --watch src/index.js",
     "start": "NODE_ENV=production node src/index.js",
-    "test": "NODE_ENV=test jest",
-    "test:unit": "NODE_ENV=test jest tests/unit",
-    "test:integration": "NODE_ENV=test jest tests/integration",
-    "test:watch": "NODE_ENV=test jest --watch",
-    "test:coverage": "NODE_ENV=test jest --coverage",
+    "test": "NODE_ENV=test NODE_OPTIONS='--experimental-vm-modules' jest",
+    "test:unit": "NODE_ENV=test NODE_OPTIONS='--experimental-vm-modules' jest tests/unit",
+    "test:integration": "NODE_ENV=test NODE_OPTIONS='--experimental-vm-modules' jest tests/integration",
+    "test:watch": "NODE_ENV=test NODE_OPTIONS='--experimental-vm-modules' jest --watch",
+    "test:coverage": "NODE_ENV=test NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
     "lint": "eslint src tests",
     "lint:fix": "eslint src tests --fix"
   },
@@ -51,6 +51,7 @@
   "license": "MIT",
   "jest": {
     "testEnvironment": "node",
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"],
     "collectCoverageFrom": [
       "src/**/*.js",
       "!src/index.js"

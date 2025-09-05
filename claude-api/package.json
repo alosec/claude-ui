@@ -1,0 +1,67 @@
+{
+  "name": "claude-api",
+  "version": "1.0.0",
+  "description": "REST API for CRUD operations on Claude Code session data with jq querying",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "NODE_ENV=development node --watch src/index.js",
+    "start": "NODE_ENV=production node src/index.js",
+    "test": "NODE_ENV=test jest",
+    "test:unit": "NODE_ENV=test jest tests/unit",
+    "test:integration": "NODE_ENV=test jest tests/integration",
+    "test:watch": "NODE_ENV=test jest --watch",
+    "test:coverage": "NODE_ENV=test jest --coverage",
+    "lint": "eslint src tests",
+    "lint:fix": "eslint src tests --fix"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "node-jq": "^6.0.1",
+    "ndjson": "^2.0.0",
+    "stream-json": "^1.8.0",
+    "uuid": "^9.0.1",
+    "joi": "^17.12.0",
+    "winston": "^3.11.0",
+    "compression": "^1.7.4"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.1.1",
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "claude",
+    "api",
+    "jq",
+    "jsonl",
+    "streaming",
+    "chat"
+  ],
+  "author": "Claude API Team",
+  "license": "MIT",
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/index.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    }
+  }
+}

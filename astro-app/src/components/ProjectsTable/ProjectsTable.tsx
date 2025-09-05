@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getFilesystemAdapter, isDemoMode, type Project } from '../../services/FilesystemAdapter';
-import ProjectGitInfo from './ProjectGitInfo';
 import './projects-table.css';
 
 export default function ProjectsTable() {
@@ -71,7 +70,6 @@ export default function ProjectsTable() {
           <tr>
             <th>path</th>
             <th>mtime</th>
-            <th>git</th>
           </tr>
         </thead>
         <tbody>
@@ -88,12 +86,6 @@ export default function ProjectsTable() {
                 onClick={() => navigate(`/project/${project.name}`)}
               >
                 {project.lastModified}
-              </td>
-              <td className="project-git">
-                <ProjectGitInfo 
-                  projectPath={project.path}
-                  projectName={project.name}
-                />
               </td>
             </tr>
           ))}

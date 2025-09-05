@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { GitStatus, GitFileChange } from '../../services/GitAdapter';
+import type { GitStatus, GitFileChange, GitCommit } from '../../services/GitAdapter';
 import { getGitAdapter } from '../../services/GitAdapter';
 import BranchIndicator from '../BranchIndicator/BranchIndicator';
 import WorktreeIndicator from '../WorktreeIndicator/WorktreeIndicator';
@@ -7,6 +7,8 @@ import './git-view.css';
 
 interface GitViewProps {
   gitStatus: GitStatus | null;
+  projectName?: string;
+  projectPath?: string;
 }
 
 interface GitTreeNode {
@@ -102,50 +104,52 @@ const buildGitTree = (changes: GitFileChange[]): GitTreeNode[] => {
   return sortRecursively(root);
 };
 
-export default function GitView({ gitStatus }: GitViewProps) {
+export default function GitView({ gitStatus, projectName, projectPath }: GitViewProps) {
   const [expandedDirs, setExpandedDirs] = useState<Set<string>>(new Set());
   const [fileChanges, setFileChanges] = useState<GitFileChange[]>([]);
+  const [commits, setCommits] = useState<GitCommit[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showFileChanges, setShowFileChanges] = useState(false);
 
   useEffect(() => {
-    const loadFileChanges = async () => {
-      if (!gitStatus?.isRepository) return;
+    const loadGitData = async () => {
+      if (!gitStatus?.isRepository || !projectName) return;
       
-      // If we already have file changes from gitStatus, use those
-      if (gitStatus.fileChanges) {
-        setFileChanges(gitStatus.fileChanges);
-        return;
-      }
-
-      // Otherwise, fetch detailed changes
       setLoading(true);
       setError(null);
 
       try {
         const adapter = getGitAdapter();
-        // For now, we'll simulate getting changes from current project
-        // In a real implementation, this would need the project path
-        const result = await adapter.getFileChanges('.');
         
-        if (result.success && result.data) {
-          setFileChanges(result.data);
-        } else {
-          setError(result.error || 'Failed to load git changes');
+        const [commitsResult, changesResult] = await Promise.all([
+          adapter.getRecentCommits(projectName, 5),
+          adapter.getFileChanges(projectName)
+        ]);
+        
+        if (commitsResult.success && commitsResult.data) {
+          setCommits(commitsResult.data);
+        }
+        
+        if (changesResult.success && changesResult.data) {
+          setFileChanges(changesResult.data);
+        }
+        
+        if (!commitsResult.success && !changesResult.success) {
+          setError('Failed to load git information');
         }
       } catch (err) {
-        console.error('Error loading git changes:', err);
-        setError('Failed to load git changes');
+        console.error('Error loading git data:', err);
+        setError('Failed to load git information');
       } finally {
         setLoading(false);
       }
     };
 
-    if (showFileChanges) {
-      loadFileChanges();
+    if (projectName) {
+      loadGitData();
     }
-  }, [gitStatus, showFileChanges]);
+  }, [gitStatus, projectName]);
 
   const toggleDirectory = (path: string) => {
     const newExpanded = new Set(expandedDirs);
@@ -237,18 +241,47 @@ export default function GitView({ gitStatus }: GitViewProps) {
         )}
       </div>
 
+      {loading && (
+        <div className="git-changes-loading">
+          <span>⏳</span>
+          <p>Loading git information...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="git-changes-error">
+          <span>⚠️</span>
+          <p>{error}</p>
+        </div>
+      )}
+
+      {!loading && !error && commits.length > 0 && (
+        <div className="commits-section">
+          <div className="section-title">Recent Commits</div>
+          <div className="commits-list">
+            {commits.map((commit) => (
+              <div key={commit.hash} className="commit-item">
+                <span className="commit-hash">{commit.shortHash}</span>
+                <span className="commit-message">{commit.message}</span>
+                <span className="commit-author">{commit.author}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!loading && !error && fileChanges.length > 0 && (
+        <div className="changes-section">
+          <div className="section-title">File Changes ({fileChanges.length})</div>
+          <div className="git-changes-tree">
+            {renderGitTree(buildGitTree(fileChanges))}
+          </div>
+        </div>
+      )}
+
       {(stagedFiles > 0 || unstagedFiles > 0 || untrackedFiles > 0 || stashCount > 0) && (
         <div className="git-status-section">
-          <div className="status-header">
-            Changes
-            <button 
-              className="toggle-details-btn"
-              onClick={() => setShowFileChanges(!showFileChanges)}
-              title={showFileChanges ? "Hide file details" : "Show file details"}
-            >
-              {showFileChanges ? '▼' : '▶'}
-            </button>
-          </div>
+          <div className="status-header">Status Summary</div>
           <div className="status-counts">
             {stagedFiles > 0 && (
               <div className="status-item">
@@ -278,39 +311,6 @@ export default function GitView({ gitStatus }: GitViewProps) {
               </div>
             )}
           </div>
-
-          {showFileChanges && (
-            <div className="git-file-changes">
-              {loading && (
-                <div className="git-changes-loading">
-                  <span>⏳</span>
-                  <p>Loading file changes...</p>
-                </div>
-              )}
-
-              {error && (
-                <div className="git-changes-error">
-                  <span>⚠️</span>
-                  <p>{error}</p>
-                </div>
-              )}
-
-              {!loading && !error && fileChanges.length === 0 && (
-                <div className="git-changes-empty">
-                  <div className="empty-message">
-                    <span>✨</span>
-                    <p>No detailed changes available</p>
-                  </div>
-                </div>
-              )}
-
-              {!loading && !error && fileChanges.length > 0 && (
-                <div className="git-changes-tree">
-                  {renderGitTree(buildGitTree(fileChanges))}
-                </div>
-              )}
-            </div>
-          )}
         </div>
       )}
 
@@ -333,6 +333,15 @@ export default function GitView({ gitStatus }: GitViewProps) {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {!loading && !error && commits.length === 0 && fileChanges.length === 0 && (
+        <div className="git-changes-empty">
+          <div className="empty-message">
+            <span>✨</span>
+            <p>No commits or changes to display</p>
           </div>
         </div>
       )}

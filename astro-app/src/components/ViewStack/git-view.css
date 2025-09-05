@@ -163,6 +163,59 @@
   padding-top: 12px;
 }
 
+/* Commits Section */
+.commits-section {
+  margin-bottom: 16px;
+}
+
+/* Changes Section */
+.changes-section {
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.commits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.commit-item {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  font-size: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.commit-hash {
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.commit-message {
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  font-weight: 500;
+}
+
+.commit-author {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
 /* Tree Section */
 .git-changes-tree {
   max-height: 300px;

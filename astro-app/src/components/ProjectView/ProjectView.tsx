@@ -97,6 +97,8 @@ export default function ProjectView() {
       <ViewStack 
         fileTree={fileTree.children || []} 
         gitStatus={gitStatus}
+        projectName={projectName}
+        projectPath={fileTree.path}
       />
     </div>
   );

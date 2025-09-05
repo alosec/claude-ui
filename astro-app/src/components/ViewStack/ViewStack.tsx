@@ -10,6 +10,8 @@ import './view-stack.css';
 interface ViewStackProps {
   fileTree: FileSystemItem[];
   gitStatus: GitStatus | null;
+  projectName?: string;
+  projectPath?: string;
 }
 
 interface ViewConfig {
@@ -20,7 +22,7 @@ interface ViewConfig {
   color: string;
 }
 
-export default function ViewStack({ fileTree, gitStatus }: ViewStackProps) {
+export default function ViewStack({ fileTree, gitStatus, projectName, projectPath }: ViewStackProps) {
   const [viewConfigs, setViewConfigs] = useState<ViewConfig[]>([
     {
       id: 'file-explorer',
@@ -88,7 +90,7 @@ export default function ViewStack({ fileTree, gitStatus }: ViewStackProps) {
       case 'file-explorer':
         return <FileExplorerView fileTree={fileTree} />;
       case 'git':
-        return <GitView gitStatus={gitStatus} />;
+        return <GitView gitStatus={gitStatus} projectName={projectName} projectPath={projectPath} />;
       case 'sessions':
         return <SessionsView />;
       default:

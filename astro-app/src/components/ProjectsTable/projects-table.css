@@ -3,13 +3,11 @@
   width: 100%;
 }
 
-.projects-table .project-path,
-.projects-table .project-mtime {
+.projects-table tbody tr {
   cursor: pointer;
 }
 
-.projects-table .project-path:hover,
-.projects-table .project-mtime:hover {
+.projects-table tbody tr:hover {
   background: var(--button-hover-bg);
   color: var(--button-hover-text);
 }

@@ -60,17 +60,14 @@ export default function ProjectsTable() {
         </thead>
         <tbody>
           {projects.map((project) => (
-            <tr key={project.name}>
-              <td 
-                className="mono project-path"
-                onClick={() => navigate(`/project/${project.name}`)}
-              >
+            <tr 
+              key={project.name}
+              onClick={() => navigate(`/project/${project.name}`)}
+            >
+              <td className="mono project-path">
                 {project.path}
               </td>
-              <td 
-                className="project-mtime"
-                onClick={() => navigate(`/project/${project.name}`)}
-              >
+              <td className="project-mtime">
                 {project.lastModified}
               </td>
             </tr>

@@ -241,8 +241,8 @@ router.get('/patterns', async (req, res, next) => {
       } else {
         patternsWithExamples[name] = {
           pattern,
-          description: this.getPatternDescription(name),
-          example: this.getPatternExample(name)
+          description: getPatternDescription(name),
+          example: getPatternExample(name)
         };
       }
     }

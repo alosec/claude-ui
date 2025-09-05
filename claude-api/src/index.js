@@ -188,30 +188,45 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-const server = app.listen(PORT, () => {
-  logger.info(`Claude API server started`, {
-    port: PORT,
-    environment: NODE_ENV,
-    claudeProjectsPath: getClaudeProjectsPath()
+// Start server only if not in test mode or explicitly disabled
+let server;
+const shouldStartServer = NODE_ENV !== 'test' && 
+                          !process.env.DISABLE_SERVER_START && 
+                          !global.__JEST__ && 
+                          process.env.NODE_ENV !== 'test';
+if (shouldStartServer) {
+  server = app.listen(PORT, () => {
+    logger.info(`Claude API server started`, {
+      port: PORT,
+      environment: NODE_ENV,
+      claudeProjectsPath: getClaudeProjectsPath()
+    });
   });
-});
+}
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
   logger.info('SIGTERM received, shutting down gracefully');
-  server.close(() => {
-    logger.info('Process terminated');
+  if (server) {
+    server.close(() => {
+      logger.info('Process terminated');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
 process.on('SIGINT', () => {
   logger.info('SIGINT received, shutting down gracefully');
-  server.close(() => {
-    logger.info('Process terminated');
+  if (server) {
+    server.close(() => {
+      logger.info('Process terminated');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
 export default app;

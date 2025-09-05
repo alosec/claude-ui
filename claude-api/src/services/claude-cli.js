@@ -180,11 +180,12 @@ class ClaudeCLI {
       let stdout = '';
       let stderr = '';
       
-      // Set up timeout
+      // Set up timeout (unref to avoid keeping process alive)
       const timeout = setTimeout(() => {
         childProcess.kill('SIGTERM');
         reject(new Error('Claude CLI process timeout'));
       }, this.processTimeoutMs);
+      timeout.unref();
 
       childProcess.stdout.on('data', (data) => {
         stdout += data.toString();

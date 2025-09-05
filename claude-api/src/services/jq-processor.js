@@ -65,10 +65,27 @@ class JQProcessor {
       throw new Error('Query contains potentially dangerous operations');
     }
 
-    // Test compilation with dummy data to catch syntax errors
+    // Test compilation with appropriate dummy data to catch syntax errors
     try {
-      await jq.run('.', '{}', { input: 'json' });
-      await jq.run(query, '{}', { input: 'json' });
+      // Test with both object and array data structures since queries can expect either
+      const testObject = { type: "test", message: "test data" };
+      const testArray = [testObject, { type: "test2", message: "more test data" }];
+      
+      // Always test basic identity first
+      await jq.run('.', testObject, { input: 'json' });
+      
+      // Try the query with object first, then array if it fails
+      try {
+        await jq.run(query, testObject, { input: 'json' });
+      } catch (objectError) {
+        // If query failed on object, try with array (for queries like .[] that expect arrays)
+        try {
+          await jq.run(query, testArray, { input: 'json' });
+        } catch (arrayError) {
+          // If both fail, report the original error (more likely to be relevant)
+          throw objectError;
+        }
+      }
     } catch (error) {
       throw new Error(`jq query syntax error: ${error.message}`);
     }
@@ -89,10 +106,10 @@ class JQProcessor {
 
       const cacheKey = this.getCacheKey(query, options);
       
-      // Set up jq options
+      // Set up jq options - use 'compact' output to handle multiple results properly
       const jqOptions = {
         input: 'json',
-        output: 'json',
+        output: 'compact',  // Changed from 'json' to handle multiple results
         ...options.jqOptions
       };
 
@@ -102,14 +119,49 @@ class JQProcessor {
         setTimeout(() => reject(new Error('Query timeout')), this.queryTimeoutMs);
       });
 
-      const result = await Promise.race([queryPromise, timeoutPromise]);
+      const rawResult = await Promise.race([queryPromise, timeoutPromise]);
+      
+      // Parse the result properly - compact output returns newline-separated JSON
+      let result;
+      if (typeof rawResult === 'string' && rawResult.trim()) {
+        const lines = rawResult.trim().split('\n');
+        if (lines.length === 1) {
+          // Single result
+          try {
+            result = JSON.parse(lines[0]);
+          } catch (parseError) {
+            result = rawResult; // Return as-is if not JSON
+          }
+        } else if (lines.length > 1) {
+          // Multiple results - return as array
+          result = lines.map(line => {
+            try {
+              return JSON.parse(line);
+            } catch (parseError) {
+              return line; // Return as-is if not JSON
+            }
+          });
+        } else {
+          result = null;
+        }
+      } else if (rawResult === '' || rawResult === null || rawResult === undefined) {
+        // Empty result - return empty array for queries that should return multiple items
+        if (query.includes('[]') || query.includes('select')) {
+          result = [];
+        } else {
+          result = null;
+        }
+      } else {
+        result = rawResult;
+      }
       
       const executionTime = Date.now() - startTime;
       
       logger.debug('jq query executed', {
         query: query.substring(0, 100) + (query.length > 100 ? '...' : ''),
         executionTimeMs: executionTime,
-        resultSize: JSON.stringify(result).length
+        resultType: typeof result,
+        resultLength: Array.isArray(result) ? result.length : 'N/A'
       });
 
       return result;
@@ -140,6 +192,15 @@ class JQProcessor {
     const errors = [];
     let lineNumber = 0;
 
+    // Adapt query for line-by-line processing
+    // Remove array operators since we're processing individual objects
+    let adaptedQuery = query;
+    if (query.startsWith('.[] | ')) {
+      adaptedQuery = query.substring(5); // Remove '.[] | ' prefix
+    } else if (query === '.[]') {
+      adaptedQuery = '.'; // Just return the object itself
+    }
+
     const transformStream = new Transform({
       objectMode: true,
       transform(chunk, encoding, callback) {
@@ -154,11 +215,24 @@ class JQProcessor {
         try {
           const jsonData = JSON.parse(line);
           
-          // Process each line with jq
-          jq.run(query, jsonData, { input: 'json', output: 'json' })
-            .then(result => {
-              if (result !== null && result !== undefined) {
-                this.push(result);
+          // Process each line with adapted jq query - use compact output
+          jq.run(adaptedQuery, jsonData, { input: 'json', output: 'compact' })
+            .then(rawResult => {
+              // Handle the compact output format
+              if (rawResult && typeof rawResult === 'string' && rawResult.trim()) {
+                try {
+                  const result = JSON.parse(rawResult.trim());
+                  if (result !== null && result !== undefined) {
+                    this.push(result);
+                  }
+                } catch (parseError) {
+                  // If not valid JSON, push as-is
+                  if (rawResult.trim()) {
+                    this.push(rawResult.trim());
+                  }
+                }
+              } else if (rawResult !== null && rawResult !== undefined && rawResult !== '') {
+                this.push(rawResult);
               }
               callback();
             })
@@ -237,37 +311,89 @@ class JQProcessor {
       throw new Error('filePaths must be a non-empty array');
     }
 
-    const allResults = [];
-    const allErrors = [];
-    let totalLines = 0;
+    // Check if this is an aggregation query that needs all data at once
+    const isAggregationQuery = query.includes('group_by') || 
+                               query.includes('sort_by') || 
+                               query.includes('max_by') || 
+                               query.includes('min_by') ||
+                               query.includes('unique_by') ||
+                               (query.includes('map(') && !query.startsWith('.[] |'));
 
-    for (const filePath of filePaths) {
-      try {
-        const { results, errors, totalLines: fileLines } = await this.streamQuery(filePath, query, options);
-        
-        allResults.push(...results);
-        totalLines += fileLines;
-        
-        if (errors) {
+    if (isAggregationQuery) {
+      // For aggregation queries, we need to collect all data first
+      const allData = [];
+      let totalLines = 0;
+      const allErrors = [];
+
+      // Read all files and collect all JSONL entries
+      for (const filePath of filePaths) {
+        try {
+          const { results, errors, totalLines: fileLines } = await this.streamQuery(filePath, '.', options);
+          allData.push(...results);
+          totalLines += fileLines;
+          
+          if (errors) {
+            allErrors.push({
+              file: filePath,
+              errors
+            });
+          }
+        } catch (error) {
           allErrors.push({
             file: filePath,
-            errors
+            errors: [{ error: error.message }]
           });
         }
-      } catch (error) {
-        allErrors.push({
-          file: filePath,
-          errors: [{ error: error.message }]
-        });
       }
-    }
 
-    return {
-      results: allResults,
-      errors: allErrors.length > 0 ? allErrors : undefined,
-      totalLines,
-      filesProcessed: filePaths.length
-    };
+      // Now run the aggregation query on all collected data
+      try {
+        const aggregatedResult = await this.runQuery(query, allData);
+        const results = Array.isArray(aggregatedResult) ? aggregatedResult : [aggregatedResult];
+        
+        return {
+          results: results.filter(r => r !== null && r !== undefined),
+          errors: allErrors.length > 0 ? allErrors : undefined,
+          totalLines,
+          filesProcessed: filePaths.length
+        };
+      } catch (error) {
+        throw new Error(`Aggregation query failed: ${error.message}`);
+      }
+    } else {
+      // For non-aggregation queries, use streaming approach
+      const allResults = [];
+      const allErrors = [];
+      let totalLines = 0;
+
+      for (const filePath of filePaths) {
+        try {
+          const { results, errors, totalLines: fileLines } = await this.streamQuery(filePath, query, options);
+          
+          allResults.push(...results);
+          totalLines += fileLines;
+          
+          if (errors) {
+            allErrors.push({
+              file: filePath,
+              errors
+            });
+          }
+        } catch (error) {
+          allErrors.push({
+            file: filePath,
+            errors: [{ error: error.message }]
+          });
+        }
+      }
+
+      return {
+        results: allResults,
+        errors: allErrors.length > 0 ? allErrors : undefined,
+        totalLines,
+        filesProcessed: filePaths.length
+      };
+    }
   }
 
   /**

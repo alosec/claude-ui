@@ -32,7 +32,7 @@ const mockClaudeCli = {
 };
 
 // Setup global test timeout
-jest.setTimeout(10000); // Reduced timeout for faster test runs
+jest.setTimeout(15000); // Extended timeout for integration tests
 
 // Global test hooks
 beforeEach(() => {
@@ -43,9 +43,30 @@ beforeEach(() => {
   mockClaudeCli.testClaudeAvailability.mockResolvedValue(false);
 });
 
-afterAll(() => {
+afterEach(async () => {
+  // Clear any pending timers after each test
+  jest.clearAllTimers();
+  jest.runOnlyPendingTimers();
+  jest.useRealTimers();
+  
+  // Small delay to allow async cleanup
+  await new Promise(resolve => setTimeout(resolve, 10));
+});
+
+afterAll(async () => {
   // Cleanup after all tests
   mockClaudeCli.cleanup();
+  
+  // Clear any pending timers
+  jest.clearAllTimers();
+  
+  // Force garbage collection if available
+  if (global.gc) {
+    global.gc();
+  }
+  
+  // Give time for async operations to complete
+  await new Promise(resolve => setTimeout(resolve, 100));
   
   // Restore console
   global.console = originalConsole;
